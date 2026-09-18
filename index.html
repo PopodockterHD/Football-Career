@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Football Career 5.1 – Spieler & Manager</title>
+<style>
+:root{
+  --bg:#07100d;--bg2:#0a1511;--panel:rgba(15,27,22,.92);--panel2:#12231c;--panel3:#0b1712;
+  --line:#203c30;--line2:#2d5945;--text:#f4fff9;--muted:#9ab4a7;--green:#55e698;--green2:#16b86b;
+  --cyan:#61dce7;--gold:#f4cc6a;--red:#ff7d7d;--orange:#ffb562;--blue:#75a7ff;--shadow:0 18px 45px rgba(0,0,0,.28)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:
+ radial-gradient(circle at 10% -10%,rgba(55,231,143,.12),transparent 32%),
+ radial-gradient(circle at 95% 10%,rgba(97,220,231,.08),transparent 26%),
+ linear-gradient(180deg,#06100c 0%,#08130f 42%,#06100c 100%)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:42px 42px}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.app{width:min(1220px,100%);margin:auto;padding:18px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;position:relative;z-index:2}
+.brand{display:flex;align-items:center;gap:10px;font-weight:950;letter-spacing:.1px;font-size:1.15rem}.ball{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,var(--green),var(--cyan));color:#052014;box-shadow:0 8px 25px rgba(85,230,152,.2)}
+.brand em{font-style:normal;color:var(--green)}
+.save-pill{font-size:.8rem;color:#b7cec1;border:1px solid var(--line);background:rgba(10,22,17,.7);padding:7px 10px;border-radius:999px;backdrop-filter:blur(12px)}
+.hero{min-height:72vh;display:grid;place-items:center;text-align:center;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:28px;background:linear-gradient(145deg,rgba(18,40,31,.92),rgba(8,20,15,.94));box-shadow:var(--shadow);padding:38px 20px}
+.hero:before,.hero:after{content:"";position:absolute;border:1px solid rgba(101,236,164,.12);border-radius:50%;width:520px;height:520px}.hero:before{left:-250px;top:-210px}.hero:after{right:-260px;bottom:-260px}
+.hero-inner{position:relative;z-index:1;max-width:820px}.eyebrow{display:inline-flex;gap:7px;align-items:center;padding:7px 11px;border-radius:999px;border:1px solid var(--line2);background:#0d2118;color:#b9e6cf;font-size:.82rem;font-weight:800}.hero h1{font-size:clamp(2.6rem,7vw,5.5rem);line-height:.98;letter-spacing:-.055em;margin:18px 0 14px}.hero h1 span{background:linear-gradient(90deg,#fff,var(--green),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:690px;margin:0 auto 24px;color:var(--muted);font-size:1.04rem;line-height:1.6}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap}.hero .btnrow{justify-content:center}
+button{border:0}.primary,.secondary,.ghost,.danger,.smallbtn{border-radius:13px;padding:11px 15px;font-weight:850;transition:.18s ease}.primary{background:linear-gradient(135deg,var(--green),var(--green2));color:#042015;box-shadow:0 8px 22px rgba(30,199,114,.18)}.primary:hover{transform:translateY(-1px);filter:brightness(1.05)}.secondary{background:#152a21;color:#ecfff5;border:1px solid var(--line2)}.secondary:hover,.ghost:hover{border-color:#4b8066;background:#173126}.ghost{background:transparent;color:#d9eee3;border:1px solid var(--line)}.danger{background:#321b1b;color:#ffc1c1;border:1px solid #653232}.smallbtn{padding:8px 10px;font-size:.8rem;background:#13271f;color:#dff8ea;border:1px solid var(--line)}
+.setup{max-width:820px;margin:24px auto}.panel{position:relative;background:linear-gradient(180deg,rgba(17,31,25,.96),rgba(12,24,19,.96));border:1px solid var(--line);border-radius:20px;padding:17px;box-shadow:0 12px 30px rgba(0,0,0,.18);overflow:hidden}.panel:after{content:"";position:absolute;inset:auto -80px -100px auto;width:180px;height:180px;background:radial-gradient(circle,rgba(85,230,152,.045),transparent 70%);pointer-events:none}.panel h2,.panel h3{margin:0}.panel h3{font-size:1rem;letter-spacing:.01em}.section-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:13px}.section-head small{color:var(--muted)}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}label{display:block;color:var(--muted);font-size:.82rem;margin:0 0 6px}input,select{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:#08150f;color:var(--text);outline:none}input:focus,select:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(85,230,152,.08)}
+.dashboard{display:grid;grid-template-columns:1.18fr .82fr;gap:14px}.span2{grid-column:1/-1}
+.playercard{padding:20px;background:linear-gradient(135deg,rgba(22,59,42,.93),rgba(13,28,22,.96));border-color:#2b5a43}.profile-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.profile-name{font-size:clamp(1.5rem,3vw,2rem);font-weight:950;letter-spacing:-.03em}.subline{color:#b3c9bd;margin-top:4px}.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border-radius:999px;background:#0a1912;border:1px solid var(--line);color:#bed4c8;font-size:.76rem}.chip.gold{border-color:#66572c;color:#ffe7a6;background:#251f0d}.chip.cyan{border-color:#22565a;color:#bceff4}.chip.red{border-color:#603131;color:#ffc2c2}
+.ovr{min-width:92px;height:92px;border-radius:25px;background:linear-gradient(145deg,#1e593c,#11402c);border:1px solid #3c815e;display:grid;place-items:center;text-align:center;box-shadow:inset 0 0 26px rgba(85,230,152,.08)}.ovr b{font-size:2.1rem;line-height:1}.ovr small{display:block;color:#b7dfc8;font-size:.65rem;letter-spacing:.1em;margin-top:3px}
+.meterwrap{margin-top:16px}.meterline{display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:6px;color:var(--muted)}.meter{height:9px;background:#06100c;border:1px solid #1c382b;border-radius:999px;overflow:hidden}.meter i{height:100%;display:block;background:linear-gradient(90deg,var(--green2),var(--green),var(--cyan));border-radius:999px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.stat{background:rgba(6,18,13,.72);border:1px solid #1c382c;border-radius:13px;padding:11px;text-align:center}.stat b{display:block;font-size:1.12rem}.stat small{display:block;color:var(--muted);font-size:.72rem;margin-top:2px}
+.contract-hero{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}.rolebadge{display:inline-flex;padding:7px 10px;border-radius:10px;font-size:.78rem;font-weight:900}.role1{background:#241e12;color:#ffd596;border:1px solid #5d4b2c}.role2{background:#14253a;color:#b8d5ff;border:1px solid #304e72}.role3{background:#123224;color:#aef0c9;border:1px solid #2c684b}.role4{background:#2e2410;color:#ffe08a;border:1px solid #69572a}
+.contract-money{font-weight:950;font-size:1.35rem}.muted{color:var(--muted)}.tiny{font-size:.75rem}.contract-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}.contract-cell{padding:10px;border-radius:12px;background:#091710;border:1px solid #1c382c}.contract-cell strong{display:block;margin-top:2px}.chancebar{margin-top:12px}.chancebar .meter i{background:linear-gradient(90deg,var(--blue),var(--green))}
+.matchbox{border-radius:16px;background:linear-gradient(145deg,#0a1812,#0d2017);border:1px solid #234433;padding:14px}.fixture{display:flex;justify-content:space-between;gap:12px;align-items:center}.fixture .teams{font-size:1.25rem;font-weight:950;letter-spacing:-.02em}.fixture .week{font-size:.72rem;color:var(--muted);margin-bottom:3px}.match-result{font-size:1.35rem;font-weight:950;margin-top:3px}.matchstats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}.mini{padding:8px;border-radius:10px;background:#07150f;border:1px solid #1b362a;text-align:center}.mini b{display:block}.mini small{color:var(--muted);font-size:.68rem}
+.season-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.awardgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.award{background:linear-gradient(145deg,#18160d,#0f1712);border:1px solid #4b4324;border-radius:13px;padding:11px}.award strong{font-size:1.15rem;display:block}.award small{color:#c9bc86}
+.nt-card{display:flex;justify-content:space-between;align-items:center;gap:14px}.nt-flag{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,#173623,#0e2118);border:1px solid #2c5d43;font-size:1.4rem}.nt-status{font-weight:900}.nt-stats{display:flex;gap:16px;margin-top:7px}.nt-stats span{font-size:.78rem;color:var(--muted)}.nt-stats b{color:var(--text)}
+.log{max-height:420px;overflow:auto;padding-right:4px}.logitem{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid #193126}.logitem:last-child{border-bottom:0}.logyear{color:var(--green);font-size:.72rem;font-weight:900}.logtext{font-size:.9rem;color:#dfede5}
+.offer-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.offer{border:1px solid var(--line);background:linear-gradient(145deg,#0a1812,#102319);border-radius:16px;padding:14px}.offer h4{margin:0;font-size:1.05rem}.offer .meta{color:var(--muted);font-size:.78rem;margin-top:3px}.offerfacts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}.fact{background:#07150f;border:1px solid #1d392d;border-radius:10px;padding:8px}.fact small{display:block;color:var(--muted);font-size:.68rem}.fact b{font-size:.85rem}.offer-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.offer-actions button{flex:1;min-width:110px}.offer-status{font-size:.72rem;margin-top:7px;color:var(--gold)}
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(0,0,0,.76);backdrop-filter:blur(8px);padding:16px}.modalbox{width:min(820px,100%);max-height:90vh;overflow:auto;background:linear-gradient(180deg,#102019,#0a1511);border:1px solid #315a46;border-radius:23px;padding:19px;box-shadow:0 35px 100px rgba(0,0,0,.55)}.modalbox h2{margin:0 0 5px}.modalbox p{line-height:1.55}.decision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}.decision{padding:14px;border-radius:14px;background:#10261b;border:1px solid #2a5841;color:#e9fff2;font-weight:850}.decision:hover{border-color:#55aa7d;transform:translateY(-1px)}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.career-title{font-size:clamp(2rem,5vw,3.2rem);font-weight:1000;letter-spacing:-.04em;margin:8px 0 14px;background:linear-gradient(90deg,#fff,var(--gold),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}.summary-section{margin-top:17px}.historyrow{display:grid;grid-template-columns:90px 1.4fr repeat(4,.65fr);gap:8px;padding:8px 0;border-bottom:1px solid #1c352a;font-size:.8rem}.historyrow.head{color:var(--muted);font-size:.7rem;font-weight:850}.historyrow:last-child{border-bottom:0}
+.toast{position:fixed;right:18px;bottom:18px;z-index:80;max-width:360px;background:#0f2419;border:1px solid #356d50;border-radius:14px;padding:11px 13px;color:#eafff2;box-shadow:var(--shadow);transform:translateY(18px);opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translateY(0)}
+.good{color:var(--green)}.warn{color:var(--orange)}.bad{color:var(--red)}.goldtext{color:var(--gold)}
+
+.career-window{margin-top:10px;padding:9px 11px;border-radius:12px;border:1px solid #315a46;background:rgba(9,30,20,.78);color:#cce9d9;font-size:.8rem;font-weight:750}.loan-info{margin-top:11px;padding:10px 11px;border-radius:12px;border:1px solid #405b85;background:#101d31;color:#cfe0ff;font-size:.8rem}.objective-list,.rumor-list{display:grid;gap:9px}.objective-item,.rumor-item{padding:11px;border-radius:13px;background:#091710;border:1px solid #1d3a2d}.objective-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.objective-item strong,.rumor-item strong{font-size:.88rem}.objective-item small,.rumor-item small{display:block;color:var(--muted);margin-top:3px}.objective-item.done{border-color:#2e7653;background:#0d2118}.objective-progress{height:7px;background:#06100c;border:1px solid #1c382b;border-radius:999px;overflow:hidden;margin-top:8px}.objective-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--green2),var(--green));border-radius:999px}.rumor-item{border-color:#2b465d;background:#0b1822}.rumor-club{color:#a9caff}.national-history{margin-top:10px;padding-top:9px;border-top:1px solid #1d382c}
+.footer{text-align:center;color:#667f72;font-size:.78rem;padding:22px 6px}
+@media(max-width:900px){.dashboard{grid-template-columns:1fr}.span2{grid-column:auto}.offer-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.app{padding:11px}.topbar{align-items:flex-start}.save-pill{max-width:48%;text-align:right}.hero{min-height:68vh;border-radius:20px}.formgrid,.decision-grid{grid-template-columns:1fr}.stats,.season-grid{grid-template-columns:repeat(2,1fr)}.awardgrid{grid-template-columns:1fr 1fr}.profile-top{gap:10px}.ovr{min-width:76px;width:76px;height:76px;border-radius:20px}.matchstats{grid-template-columns:repeat(2,1fr)}.contract-grid{grid-template-columns:1fr 1fr}.historyrow{grid-template-columns:70px 1fr 45px 45px}.historyrow>*:nth-child(n+5){display:none}}
+
+.role-progress{margin-top:12px;padding:11px;border-radius:13px;background:linear-gradient(145deg,#0a1812,#0d2118);border:1px solid #234433}
+.role-progress .meter i{background:linear-gradient(90deg,#f4cc6a,#55e698)}
+.trainingline{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:8px;font-size:.78rem;color:var(--muted)}
+.squad-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.squad-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:10px 11px;border:1px solid #1d392d;border-radius:12px;background:#081610}.squad-row.me{border-color:#3c815e;background:#0d2619}.squad-row .pname{font-weight:850}.squad-row .ppos{font-size:.72rem;color:var(--muted)}.rating-pill{min-width:46px;text-align:center;padding:5px 7px;border-radius:9px;background:#13291f;border:1px solid #2b5842;font-weight:900}.rating-pill.top{color:#aef0c9}.rating-pill.low{color:#ffc2c2}.ovr-pill{font-size:.72rem;color:#bfd2c6}
+.info-banner{padding:10px 12px;border-radius:12px;background:#0c1f17;border:1px solid #28503c;color:#cce6d8;font-size:.8rem;line-height:1.45;margin-bottom:10px}
+.compare-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.compare-card{border:1px solid #294735;background:#0a1812;border-radius:14px;padding:12px}.compare-card.you{border-color:#4c8b68;background:#0d261a}.compare-card h4{margin:0 0 3px}.compare-card .compare-score{font-size:1.35rem;font-weight:950;margin:8px 0}.compare-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.76rem;color:var(--muted)}.compare-stats b{color:var(--text)}
+.club-count{font-size:.72rem;color:var(--muted)}
+@media(max-width:820px){.squad-list{grid-template-columns:1fr}.compare-grid{grid-template-columns:1fr}}
+
+
+.modecards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}.modecard{text-align:left;padding:17px;border-radius:18px;background:rgba(6,20,14,.72);border:1px solid #28503c}.modecard h3{margin:5px 0}.modecard p{font-size:.86rem;margin:0 0 13px;color:var(--muted)}.modecard button{width:100%;margin-top:7px}.modeicon{font-size:1.7rem}
+.rival-card,.coach-card,.story-card,.record-card,.agentbox{border:1px solid #1d392d;background:#081610;border-radius:13px;padding:11px}.rival-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;text-align:center}.rival-vs{color:var(--gold);font-weight:950}.rival-person b{display:block}.rival-person small{color:var(--muted)}.coach-card{margin-bottom:9px}.coach-line,.record-line{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid #173025}.coach-line:last-child,.record-line:last-child{border-bottom:0}.agentbox{margin-top:9px}.story-card{border-color:#4f4527;background:linear-gradient(145deg,#17140b,#0b1812)}.story-title{font-weight:950;color:var(--gold);font-size:1.08rem}.record-card{margin-top:9px}.news-feed{display:grid;gap:8px;max-height:330px;overflow:auto}.news-item{padding:10px 11px;border-radius:12px;background:#0b1822;border:1px solid #27465d}.news-item strong{display:block;color:#d6e8ff}.news-item small{display:block;color:#8da8ba;margin-top:3px}.bigmatch{border-color:#75612d!important;background:linear-gradient(145deg,#211b0d,#102118)!important}.bigmatch .week{color:var(--gold)!important}.manager-form{grid-template-columns:repeat(3,1fr);margin-top:0}.manager-squad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.manager-player{padding:10px;border:1px solid #1d392d;border-radius:12px;background:#081610}.manager-player.young{border-color:#356a83;background:#0a1a22}.manager-player b{display:block}.manager-player small{color:var(--muted)}.market-price{font-size:1.05rem;font-weight:950;color:var(--gold)}
+@media(max-width:820px){.modecards{grid-template-columns:1fr}.manager-squad{grid-template-columns:1fr 1fr}.manager-form{grid-template-columns:1fr}.rival-grid{grid-template-columns:1fr}.rival-vs{display:none}}
+@media(max-width:520px){.manager-squad{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar"><div class="brand"><div class="ball">⚽</div><div>Football <em>Career 5.1</em></div></div><div id="savePill" class="save-pill">Noch keine Karriere</div></div>
+
+  <section id="home" class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">● KARRIERE-SIMULATOR</div>
+      <h1>Vom Talent zum <span>Weltstar.</span></h1>
+      <p>Wähle deinen Weg: Spiele eine eigene Profikarriere vom Jugendtalent bis zur Legende – oder übernimm im Manager-Modus einen Verein und forme dein Team.</p>
+      <div class="modecards">
+        <div class="modecard"><div class="modeicon">👟</div><h3>Spielerkarriere</h3><p>Spielzeit, Verträge, Nationalteam, Auszeichnungen, Agent, Rivalen und Karrieregeschichten.</p><button class="primary" onclick="showSetup()">Neue Spielerkarriere</button><button id="continueBtn" class="secondary hidden" onclick="continueCareer()">Spielerkarriere fortsetzen</button></div>
+        <div class="modecard"><div class="modeicon">🧥</div><h3>Manager-Modus</h3><p>Taktik, Kader, Transfers, Nachwuchs, Vorstandziele, Titel und Angebote anderer Vereine.</p><button class="primary" onclick="showManagerSetup()">Neue Managerkarriere</button><button id="managerContinueBtn" class="secondary hidden" onclick="continueManagerCareer()">Managerkarriere fortsetzen</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="setup" class="setup panel hidden">
+    <div class="section-head"><div><h2>Spieler erstellen</h2><small>Die versteckten Werte wie Potenzial und Alterskurve kennst du nicht.</small></div></div>
+    <div class="formgrid">
+      <div><label>Name</label><input id="pName" value="Mario Trefflinger"></div>
+      <div><label>Nationalität</label><select id="pCountry"><option>Österreich</option><option>Deutschland</option><option>Kroatien</option><option>Schweiz</option><option>Italien</option><option>Frankreich</option><option>Spanien</option><option>England</option><option>Portugal</option><option>Niederlande</option><option>Belgien</option><option>Brasilien</option><option>Argentinien</option><option>Andere</option></select></div>
+      <div><label>Position</label><select id="pPos" onchange="updateStyleOptions()"><option value="ST">Stürmer (ST)</option><option value="LF">Linker Flügel (LF)</option><option value="RF">Rechter Flügel (RF)</option><option value="ZOM">Offensives Mittelfeld (ZOM)</option><option value="ZM">Zentrales Mittelfeld (ZM)</option><option value="ZDM">Defensives Mittelfeld (ZDM)</option><option value="LV">Linksverteidiger (LV)</option><option value="RV">Rechtsverteidiger (RV)</option><option value="IV">Innenverteidiger (IV)</option><option value="TW">Torwart (TW)</option></select></div><div><label>Spielertyp</label><select id="pStyle"></select></div>
+      <div><label>Trikotnummer</label><input id="pNumber" type="number" min="1" max="99" value="10"></div>
+      <div><label>Bevorzugter Fuß</label><select id="pFoot"><option>Rechts</option><option>Links</option></select></div>
+      <div><label>Karrierestart</label><select id="pStart"><option value="academy">Jugendakademie – bessere Förderung, stärkere Konkurrenz</option><option value="local">Örtlicher Verein – mehr Spielzeit, weniger Aufmerksamkeit</option></select></div><div><label>Karrierelänge</label><select id="pRetirement"><option value="realistic">Realistisch – meist etwa 35–40</option><option value="short">Kurz – etwa 32–36</option><option value="long">Lang – etwa 37–43</option><option value="marathon">Sehr lang – etwa 40–45</option></select></div>
+    </div>
+    <div class="btnrow" style="margin-top:15px"><button class="primary" onclick="startCareer()">Karriere starten</button><button class="ghost" onclick="goHome()">Zurück</button></div>
+  </section>
+
+
+  <section id="managerSetup" class="setup panel hidden">
+    <div class="section-head"><div><h2>Managerkarriere erstellen</h2><small>Einfacher Manager-Modus: Taktik, Transfers, Jugend und Ergebnisse – ohne Tabellen-Mikromanagement.</small></div></div>
+    <div class="formgrid">
+      <div><label>Managername</label><input id="mName" value="Mario Trefflinger"></div>
+      <div><label>Nationalität</label><select id="mCountry"><option>Österreich</option><option>Deutschland</option><option>Kroatien</option><option>Schweiz</option><option>Italien</option><option>Frankreich</option><option>Spanien</option><option>England</option><option>Portugal</option><option>Niederlande</option><option>Belgien</option><option>Brasilien</option><option>Argentinien</option></select></div>
+      <div><label>Startverein</label><select id="mClub"></select></div>
+      <div><label>Formation</label><select id="mFormation"><option>4-3-3</option><option>4-2-3-1</option><option>4-4-2</option><option>3-5-2</option><option>3-4-3</option></select></div>
+      <div><label>Spielidee</label><select id="mMentality"><option>Ausgewogen</option><option>Offensiv</option><option>Defensiv</option><option>Ballbesitz</option><option>Konter</option></select></div>
+      <div><label>Nachwuchsfokus</label><select id="mYouth"><option>Normal</option><option>Hoch</option><option>Niedrig</option></select></div>
+    </div>
+    <div class="btnrow" style="margin-top:15px"><button class="primary" onclick="startManagerCareer()">Managerkarriere starten</button><button class="ghost" onclick="goHomeFromManager()">Zurück</button></div>
+  </section>
+
+  <main id="game" class="hidden">
+    <div class="dashboard">
+      <section class="panel playercard">
+        <div class="profile-top"><div><div id="name" class="profile-name"></div><div id="clubLine" class="subline"></div><div id="chips" class="chips"></div></div><div class="ovr"><div><b id="ovr">60</b><small>GES</small></div></div></div>
+        <div class="meterwrap"><div class="meterline"><span>Form</span><b id="formText">Gut</b></div><div class="meter"><i id="formMeter" style="width:50%"></i></div></div>
+        <div class="stats"><div class="stat"><b id="age">16</b><small>Alter</small></div><div class="stat"><b id="reputation">0</b><small>Ruf</small></div><div class="stat"><b id="market">€0,8 Mio.</b><small>Marktwert</small></div><div class="stat"><b id="trust">50</b><small>Trainervertrauen</small></div></div><div id="retirementInfo" class="career-window">Karriereende: wird beim Start festgelegt</div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Vertrag & Rolle</h3><small>Das ist die geplante Verwendung im Kader.</small></div><span id="roleBadge" class="rolebadge role2">Rotation</span></div>
+        <div class="contract-hero"><div><div class="muted tiny">Gehalt pro Woche</div><div id="salary" class="contract-money">€ 1.000</div></div><div style="text-align:right"><div class="muted tiny">Vertrag bis</div><b id="contractUntil">2029</b></div></div>
+        <div class="contract-grid"><div class="contract-cell"><small class="muted">Restlaufzeit</small><strong id="contractYears">3 Jahre</strong></div><div class="contract-cell"><small class="muted">Kapitän</small><strong id="captain">Nein</strong></div></div>
+        <div class="chancebar"><div class="meterline"><span>Erwartete Einsatzchance</span><b id="playChanceLabel">55%</b></div><div class="meter"><i id="playChanceMeter" style="width:55%"></i></div></div>
+        <div class="role-progress"><div class="meterline"><span>Weg zur nächsten Kaderrolle</span><b id="roleProgressLabel">0%</b></div><div class="meter"><i id="roleProgressMeter" style="width:50%"></i></div><div class="trainingline"><span>Letzte Trainingswoche</span><b id="trainingRating">–</b></div></div>
+        <div id="loanInfo" class="loan-info hidden"></div><div class="btnrow" style="margin-top:12px"><button id="transferRequestBtn" class="ghost" onclick="requestTransfer()">Transferwunsch äußern</button></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Trainerziele</h3><small>Erfülle Ziele, um Vertrauen und Kaderrolle zu verbessern.</small></div></div>
+        <div id="trainerObjectives" class="objective-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Transfergerüchte</h3><small>Gerüchte sind kein garantiertes Angebot.</small></div></div>
+        <div id="transferRumors" class="rumor-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Nächstes Spiel</h3><small id="seasonLabel"></small></div></div>
+        <div id="nextMatch" class="matchbox"></div>
+        <div class="btnrow" style="margin-top:11px"><button class="primary" onclick="playMatch()">Spiel simulieren</button><button class="secondary" onclick="simulateGames(5)">5 Spiele</button><button class="secondary" onclick="simulateRest()">Rest der Saison</button></div>
+        <div id="lastMatch" style="margin-top:11px"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Saison</h3><small>Positionsgerecht bewertet</small></div></div>
+        <div class="season-grid"><div class="stat"><b id="apps">0</b><small>Spiele</small></div><div class="stat"><b id="goals">0</b><small id="gLabel">Tore</small></div><div class="stat"><b id="assists">0</b><small id="aLabel">Vorlagen</small></div><div class="stat"><b id="avgRating">-</b><small>Ø Bewertung</small></div></div>
+        <div class="stats"><div class="stat"><b id="teamPos">-</b><small>Liga-Platz</small></div><div class="stat"><b id="positionStat1">0</b><small id="positionStat1Label">Schüsse</small></div><div class="stat"><b id="positionStat2">0</b><small id="positionStat2Label">Chancen</small></div><div class="stat"><b id="seasonMinutes">0</b><small>Minuten</small></div></div>
+      </section>
+
+      <section class="panel span2">
+        <div class="section-head"><div><h3>Mitspieler & Saisonbewertungen</h3><small id="squadSeasonLabel">Wird nach deiner ersten Saison angezeigt</small></div><span id="squadClubCount" class="club-count"></span></div>
+        <div class="info-banner">Die Kaderdaten sind bewusst vereinfacht. Bei einigen großen Vereinen werden echte Spielernamen als Startdaten verwendet; andere Plätze werden simuliert. Die Bewertungen entstehen aus der jeweiligen Saison im Spiel und sind keine echten Live-Ratings.</div>
+        <div id="squadReview" class="squad-list"><div class="muted tiny">Schließe eine Saison ab, um die Leistungen deines Teams zu vergleichen.</div></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Nationalmannschaft</h3><small id="ntSub">Noch nicht nominiert</small></div></div>
+        <div class="nt-card"><div style="display:flex;gap:11px;align-items:center"><div class="nt-flag">🌍</div><div><div id="ntCountry" class="nt-status">Österreich</div><div id="ntLevel" class="muted">Keine Nominierung</div><div class="nt-stats"><span><b id="caps">0</b> Spiele</span><span><b id="intGoals">0</b> Tore</span></div></div></div><div id="ntTrophies" class="chip gold">0 Titel</div></div><div id="nationalTournamentInfo" class="national-history muted tiny">Noch kein großes Turnier gespielt.</div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Auszeichnungen</h3><small>Individuelle Erfolge</small></div></div>
+        <div class="awardgrid"><div class="award"><strong id="ballons">0</strong><small>Ballon d'Or</small></div><div class="award"><strong id="goldenBoys">0</strong><small>Golden Boy</small></div><div class="award"><strong id="goldenBoots">0</strong><small>Torschützenkönig</small></div><div class="award"><strong id="bestGK">0</strong><small>Bester Torhüter</small></div><div class="award"><strong id="playerSeason">0</strong><small>Spieler der Saison</small></div><div class="award"><strong id="tots">0</strong><small>Team der Saison</small></div></div>
+      </section>
+
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Konkurrenz um den Stammplatz</h3><small>Deine Leistung zählt mehr als nur die Gesamtstärke.</small></div></div>
+        <div id="competitorCard" class="rival-card"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Trainer & Agent</h3><small>Beziehung und Karrierefokus beeinflussen Chancen und Angebote.</small></div></div>
+        <div id="coachCard" class="coach-card"></div>
+        <div class="agentbox"><label>Agentenfokus</label><select id="agentFocus" onchange="setAgentFocus(this.value)"><option value="balanced">Ausgewogen</option><option value="playingTime">Mehr Spielzeit</option><option value="bigClub">Größere Vereine</option><option value="salary">Höheres Gehalt</option><option value="loyalty">Vereinstreue</option></select></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Karrieregeschichte</h3><small>Dein Verlauf entwickelt automatisch eine eigene Geschichte.</small></div></div>
+        <div id="storyCard" class="story-card"></div>
+        <div id="clubRecordCard" class="record-card"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Karriere-Zeitung</h3><small>Nur wichtige Schlagzeilen statt Nachrichten-Spam.</small></div></div>
+        <div id="newsFeed" class="news-feed"></div>
+      </section>
+
+      <section class="panel span2">
+        <div class="section-head"><div><h3>Karriere</h3><small>Gesamtbilanz</small></div><button class="danger" onclick="retireCareer()">Karriere beenden</button></div>
+        <div class="stats"><div class="stat"><b id="careerApps">0</b><small>Spiele</small></div><div class="stat"><b id="careerGoals">0</b><small>Tore</small></div><div class="stat"><b id="careerAssists">0</b><small>Vorlagen</small></div><div class="stat"><b id="careerTrophies">0</b><small>Titel</small></div></div>
+        <div id="trophyList" class="chips"></div>
+      </section>
+
+      <section class="panel span2"><div class="section-head"><div><h3>Karriere-Ticker</h3><small>Transfers, Titel, Verletzungen und besondere Momente</small></div></div><div id="log" class="log"></div></section>
+    </div>
+  </main>
+
+  <main id="managerGame" class="hidden">
+    <div class="dashboard">
+      <section class="panel playercard">
+        <div class="profile-top"><div><div id="mManagerName" class="profile-name"></div><div id="mClubLine" class="subline"></div><div id="mChips" class="chips"></div></div><div class="ovr"><div><b id="mRep">20</b><small>RUF</small></div></div></div>
+        <div class="stats"><div class="stat"><b id="mYear">2026</b><small>Jahr</small></div><div class="stat"><b id="mBoard">70</b><small>Vorstand</small></div><div class="stat"><b id="mBudget">€ 20 Mio.</b><small>Budget</small></div><div class="stat"><b id="mSquadRating">75</b><small>Kaderstärke</small></div></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Taktik</h3><small>Einfach einstellen – sie beeinflusst Tore und Gegentore.</small></div></div>
+        <div class="formgrid manager-form"><div><label>Formation</label><select id="mFormationLive" onchange="updateManagerTactics()"><option>4-3-3</option><option>4-2-3-1</option><option>4-4-2</option><option>3-5-2</option><option>3-4-3</option></select></div><div><label>Spielidee</label><select id="mMentalityLive" onchange="updateManagerTactics()"><option>Ausgewogen</option><option>Offensiv</option><option>Defensiv</option><option>Ballbesitz</option><option>Konter</option></select></div><div><label>Nachwuchsfokus</label><select id="mYouthLive" onchange="updateManagerTactics()"><option>Normal</option><option>Hoch</option><option>Niedrig</option></select></div></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Nächstes Spiel</h3><small id="mSeasonLabel"></small></div></div>
+        <div id="mNextMatch" class="matchbox"></div>
+        <div class="btnrow" style="margin-top:11px"><button class="primary" onclick="managerPlayMatch()">Spiel simulieren</button><button class="secondary" onclick="managerSimGames(5)">5 Spiele</button><button class="secondary" onclick="managerSimRest()">Rest der Saison</button></div>
+        <div id="mLastMatch" style="margin-top:11px"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Saison & Vorstand</h3><small>Ergebnisse bestimmen Vertrauen und Jobangebote.</small></div></div>
+        <div class="stats"><div class="stat"><b id="mPos">-</b><small>Liga-Platz</small></div><div class="stat"><b id="mWins">0</b><small>Siege</small></div><div class="stat"><b id="mGF">0</b><small>Tore</small></div><div class="stat"><b id="mGA">0</b><small>Gegentore</small></div></div>
+        <div id="mObjectives" class="objective-list" style="margin-top:10px"></div>
+      </section>
+
+      <section class="panel span2">
+        <div class="section-head"><div><h3>Kader</h3><small>Startelf ergibt sich automatisch aus Stärke, Form und deiner Taktik.</small></div><div class="btnrow"><button class="secondary smallbtn" onclick="promoteYouth()">Jugendspieler hochziehen</button><button class="secondary smallbtn" onclick="openManagerMarket()">Transfermarkt</button></div></div>
+        <div id="mSquad" class="manager-squad"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Managerkarriere</h3><small>Titel und Bilanz</small></div></div>
+        <div class="stats"><div class="stat"><b id="mCareerMatches">0</b><small>Spiele</small></div><div class="stat"><b id="mCareerWins">0</b><small>Siege</small></div><div class="stat"><b id="mTitles">0</b><small>Titel</small></div><div class="stat"><b id="mClubs">1</b><small>Vereine</small></div></div>
+        <div id="mTrophyList" class="chips"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-head"><div><h3>Manager-News</h3><small>Vorstand, Transfers und Jobgerüchte</small></div></div>
+        <div id="mNews" class="news-feed"></div>
+      </section>
+
+      <section class="panel span2"><div class="section-head"><div><h3>Manager-Ticker</h3><small>Deine Entscheidungen und Saisonereignisse</small></div><button class="danger" onclick="retireManager()">Managerkarriere beenden</button></div><div id="mLog" class="log"></div></section>
+    </div>
+  </main>
+
+  <div class="footer">Offline spielbar · Automatisches Speichern im Browser · Version 5.1</div>
+</div>
+
+<div id="offersModal" class="modal hidden"><div class="modalbox"><div class="section-head"><div><h2>Transfer & Vertrag</h2><small id="offerIntro">Deine Optionen für die kommende Saison.</small></div></div><div id="offers" class="offer-grid"></div></div></div>
+
+<div id="negotiateModal" class="modal hidden"><div class="modalbox"><h2>Einfach verhandeln</h2><p class="muted">Du kannst genau einen Punkt nachverhandeln. Der Verein kann zustimmen oder beim ursprünglichen Angebot bleiben.</p><div class="decision-grid"><button class="decision" onclick="negotiateCurrent('salary')">💶 Mehr Gehalt</button><button class="decision" onclick="negotiateCurrent('role')">⭐ Größere Rolle</button><button class="decision" onclick="negotiateCurrent('years')">📝 Kürzerer Vertrag</button></div><div class="btnrow" style="margin-top:12px"><button class="ghost" onclick="closeNegotiate()">Abbrechen</button></div></div></div>
+
+<div id="eventModal" class="modal hidden"><div class="modalbox"><div class="eyebrow" id="eventTag">KARRIEREEREIGNIS</div><h2 id="eventTitle" style="margin-top:12px"></h2><p id="eventText" class="muted"></p><div id="eventChoices" class="decision-grid"></div></div></div>
+
+<div id="endModal" class="modal hidden"><div class="modalbox"><div class="eyebrow">KARRIEREENDE</div><div id="careerTitle" class="career-title"></div><div id="careerSummary"></div><div class="btnrow" style="margin-top:17px"><button class="primary" onclick="newCareerAfterEnd()">Neue Karriere</button><button class="secondary" onclick="closeEnd()">Karriere ansehen</button></div></div></div>
+
+<div id="managerMarketModal" class="modal hidden"><div class="modalbox"><div class="section-head"><div><h2>Transfermarkt</h2><small>Wenige klare Optionen statt riesiger Datenbank.</small></div><button class="ghost smallbtn" onclick="closeManagerMarket()">Schließen</button></div><div id="managerMarket" class="offer-grid"></div></div></div>
+<div id="managerOffersModal" class="modal hidden"><div class="modalbox"><div class="section-head"><div><h2>Manager-Angebote</h2><small>Bleib beim Verein oder nimm ein neues Projekt an.</small></div></div><div id="managerOffers" class="offer-grid"></div></div></div>
+<div id="managerEndModal" class="modal hidden"><div class="modalbox"><div class="eyebrow">MANAGERKARRIERE</div><div id="managerCareerTitle" class="career-title"></div><div id="managerCareerSummary"></div><div class="btnrow" style="margin-top:17px"><button class="primary" onclick="newManagerCareerAfterEnd()">Neue Managerkarriere</button><button class="secondary" onclick="closeManagerEnd()">Karriere ansehen</button></div></div></div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const SAVE_KEY='footballCareer_v5';
+const OLD_SAVE_KEY4='footballCareer_v4';
+const MANAGER_SAVE_KEY='footballManager_v1';
+const OLD_SAVE_KEY3='footballCareer_v3';
+const OLD_SAVE_KEY2='footballCareer_v2';
+const OLD_SAVE_KEY='footballCareer_v1';
+const ROLE_NAMES=['','Reservespieler','Rotationsspieler','Stammspieler','Schlüsselspieler'];
+const ROLE_PLAY=[0,.22,.53,.82,.95];
+const POSITION_GROUP={TW:'GK',IV:'DEF',LV:'DEF',RV:'DEF',ZDM:'MID',ZM:'MID',ZOM:'AM',LF:'WING',RF:'WING',ST:'ST'};
+const CLUBS=[
+['SV Heimat','Österreich',1,.94,54,.55],['Austria Nachwuchsakademie','Österreich',2,1.19,59,.70],['FC Liefering','Österreich',3,1.23,63,.85],['LASK','Österreich',5,1.08,72,1.00],['Rapid Wien','Österreich',5,1.05,72,1.00],['Sturm Graz','Österreich',6,1.13,76,1.06],['RB Salzburg','Österreich',7,1.24,79,1.16],['Austria Wien','Österreich',5,1.06,71,.98],['Wolfsberger AC','Österreich',4,1.03,69,.90],
+['Bayern München','Deutschland',10,1.05,90,1.95],['Borussia Dortmund','Deutschland',9,1.14,86,1.70],['Bayer Leverkusen','Deutschland',9,1.16,85,1.62],['RB Leipzig','Deutschland',8,1.14,83,1.50],['Eintracht Frankfurt','Deutschland',8,1.10,82,1.45],['VfB Stuttgart','Deutschland',7,1.12,80,1.34],['SC Freiburg','Deutschland',6,1.17,76,1.25],['Mainz 05','Deutschland',6,1.08,75,1.20],['Werder Bremen','Deutschland',6,1.04,74,1.18],['Borussia Mönchengladbach','Deutschland',6,1.06,75,1.22],['TSG Hoffenheim','Deutschland',6,1.08,75,1.22],
+['Arsenal','England',9,1.13,87,2.00],['Liverpool','England',10,1.07,89,2.15],['Manchester City','England',10,1.08,91,2.20],['Manchester United','England',9,1.05,84,2.00],['Chelsea','England',9,1.11,86,1.95],['Tottenham Hotspur','England',8,1.07,83,1.80],['Newcastle United','England',8,1.07,83,1.75],['Aston Villa','England',8,1.08,82,1.68],['Brighton','England',7,1.19,78,1.40],
+['Real Madrid','Spanien',10,1.06,91,2.05],['FC Barcelona','Spanien',10,1.17,89,1.90],['Atlético Madrid','Spanien',9,1.02,86,1.75],['Athletic Bilbao','Spanien',8,1.10,82,1.45],['Real Sociedad','Spanien',7,1.12,80,1.30],['Villarreal','Spanien',7,1.08,79,1.30],['Sevilla','Spanien',7,1.04,78,1.32],['Real Betis','Spanien',7,1.06,79,1.31],
+['Inter Mailand','Italien',9,1.05,87,1.66],['AC Mailand','Italien',9,1.09,85,1.60],['Juventus','Italien',9,1.04,85,1.65],['Napoli','Italien',9,1.08,85,1.58],['Atalanta','Italien',8,1.17,83,1.40],['AS Roma','Italien',8,1.05,82,1.45],['Lazio Rom','Italien',8,1.04,81,1.42],['Fiorentina','Italien',7,1.09,79,1.30],
+['Paris SG','Frankreich',10,1.04,89,1.90],['AS Monaco','Frankreich',8,1.19,81,1.34],['Olympique Marseille','Frankreich',8,1.08,81,1.35],['Lille','Frankreich',7,1.14,79,1.25],['Lyon','Frankreich',7,1.10,78,1.27],
+['Ajax','Niederlande',7,1.26,79,1.15],['PSV Eindhoven','Niederlande',8,1.20,81,1.20],['Feyenoord','Niederlande',8,1.16,80,1.19],['AZ Alkmaar','Niederlande',6,1.18,75,1.02],
+['Benfica','Portugal',8,1.22,82,1.28],['Sporting CP','Portugal',8,1.21,83,1.30],['FC Porto','Portugal',8,1.15,81,1.26],['SC Braga','Portugal',7,1.12,77,1.10],
+['Club Brugge','Belgien',7,1.13,78,1.12],['Anderlecht','Belgien',6,1.17,75,1.05],['Celtic','Schottland',7,1.09,77,1.08],['Rangers','Schottland',7,1.07,76,1.06],['Dinamo Zagreb','Kroatien',6,1.18,74,.96],['Hajduk Split','Kroatien',5,1.08,71,.88]
+].map(([name,country,prestige,dev,squad,wage])=>({name,country,prestige,dev,squad,wage}));
+
+const REAL_CORE={
+'Real Madrid':['Kylian Mbappé|ST|92','Jude Bellingham|ZM|90','Vinícius Júnior|LF|90','Federico Valverde|ZM|88','Thibaut Courtois|TW|89'],
+'FC Barcelona':['Lamine Yamal|RF|91','Pedri|ZM|88','Gavi|ZM|85','Raphinha|LF|87','Pau Cubarsí|IV|86'],
+'Bayern München':['Jamal Musiala|ZOM|89','Harry Kane|ST|90','Joshua Kimmich|ZM|87','Michael Olise|RF|86','Alphonso Davies|LV|85'],
+'Liverpool':['Florian Wirtz|ZOM|89','Dominik Szoboszlai|ZM|86','Alexander Isak|ST|87','Virgil van Dijk|IV|88','Alisson|TW|88'],
+'Paris SG':['Ousmane Dembélé|RF|89','Khvicha Kvaratskhelia|LF|88','Vitinha|ZM|88','Achraf Hakimi|RV|87','Marquinhos|IV|85']
+};
+const LEGEND_BENCHMARKS={
+ GK:[
+  {name:'Iker Casillas',apps:1000,goals:0,assists:1,clean:440,ballon:0,titles:19,score:73},
+  {name:'Manuel Neuer',apps:850,goals:0,assists:5,clean:360,ballon:0,titles:26,score:79},
+  {name:'Gianluigi Buffon',apps:1100,goals:0,assists:2,clean:500,ballon:0,titles:25,score:82}],
+ DEF:[
+  {name:'Philipp Lahm',apps:750,goals:25,assists:90,ballon:0,titles:21,score:74},
+  {name:'Sergio Ramos',apps:1000,goals:140,assists:45,ballon:0,titles:28,score:82},
+  {name:'Paolo Maldini',apps:1000,goals:40,assists:45,ballon:0,titles:26,score:84}],
+ MID:[
+  {name:'Andrés Iniesta',apps:900,goals:100,assists:190,ballon:0,titles:32,score:78},
+  {name:'Luka Modrić',apps:900,goals:130,assists:170,ballon:1,titles:30,score:83},
+  {name:'Zinedine Zidane',apps:800,goals:155,assists:170,ballon:1,titles:15,score:86}],
+ ATT:[
+  {name:'Neymar',apps:750,goals:450,assists:280,ballon:0,titles:25,score:80},
+  {name:'Cristiano Ronaldo',apps:1250,goals:950,assists:260,ballon:5,titles:34,score:94},
+  {name:'Lionel Messi',apps:1100,goals:900,assists:400,ballon:8,titles:44,score:98}]
+};
+
+const PLAYER_SEASON_MATCHES=38;
+function rollPotential(start){
+  const x=Math.random();
+  if(x<.012)return rndi(97,99);       // generation talent: very rare
+  if(x<.085)return rndi(92,96);       // elite potential
+  return start==='academy'?rndi(76,91):rndi(72,90);
+}
+function rolePromotionNeed(level){return ({1:14,2:24,3:36,4:999})[level]||24}
+let state=null,negotiatingOfferId=null,toastTimer=null;
+const byId=id=>document.getElementById(id);
+const home=byId('home'),setup=byId('setup'),game=byId('game'),savePill=byId('savePill'),continueBtn=byId('continueBtn');
+const pName=byId('pName'),pCountry=byId('pCountry'),pPos=byId('pPos'),pNumber=byId('pNumber'),pFoot=byId('pFoot'),pStart=byId('pStart'),pRetirement=byId('pRetirement');
+const nameEl=byId('name'),clubLine=byId('clubLine'),chips=byId('chips'),ovr=byId('ovr'),age=byId('age'),reputation=byId('reputation'),market=byId('market'),trust=byId('trust'),formText=byId('formText'),formMeter=byId('formMeter'),retirementInfo=byId('retirementInfo');
+const roleBadge=byId('roleBadge'),salary=byId('salary'),contractYears=byId('contractYears'),contractUntil=byId('contractUntil'),captain=byId('captain'),playChanceLabel=byId('playChanceLabel'),playChanceMeter=byId('playChanceMeter'),roleProgressLabel=byId('roleProgressLabel'),roleProgressMeter=byId('roleProgressMeter'),trainingRating=byId('trainingRating'),transferRequestBtn=byId('transferRequestBtn'),loanInfo=byId('loanInfo');
+const seasonLabel=byId('seasonLabel'),apps=byId('apps'),goals=byId('goals'),gLabel=byId('gLabel'),assists=byId('assists'),aLabel=byId('aLabel'),avgRating=byId('avgRating'),teamPos=byId('teamPos'),seasonMinutes=byId('seasonMinutes'),positionStat1=byId('positionStat1'),positionStat1Label=byId('positionStat1Label'),positionStat2=byId('positionStat2'),positionStat2Label=byId('positionStat2Label');
+const ntCountry=byId('ntCountry'),ntLevel=byId('ntLevel'),ntSub=byId('ntSub'),caps=byId('caps'),intGoals=byId('intGoals'),ntTrophies=byId('ntTrophies'),nationalTournamentInfo=byId('nationalTournamentInfo');
+const ballons=byId('ballons'),goldenBoys=byId('goldenBoys'),goldenBoots=byId('goldenBoots'),bestGK=byId('bestGK'),playerSeason=byId('playerSeason'),tots=byId('tots');
+const careerApps=byId('careerApps'),careerGoals=byId('careerGoals'),careerAssists=byId('careerAssists'),careerTrophies=byId('careerTrophies'),trophyList=byId('trophyList'),log=byId('log'),nextMatch=byId('nextMatch'),lastMatch=byId('lastMatch'),squadReview=byId('squadReview'),squadSeasonLabel=byId('squadSeasonLabel'),squadClubCount=byId('squadClubCount'),trainerObjectives=byId('trainerObjectives'),transferRumors=byId('transferRumors');
+const offersModal=byId('offersModal'),offerIntro=byId('offerIntro'),offers=byId('offers'),negotiateModal=byId('negotiateModal');
+const eventModal=byId('eventModal'),eventTag=byId('eventTag'),eventTitle=byId('eventTitle'),eventText=byId('eventText'),eventChoices=byId('eventChoices');
+const endModal=byId('endModal'),careerTitleEl=byId('careerTitle'),careerSummary=byId('careerSummary');
+function rnd(a,b){return Math.random()*(b-a)+a}function rndi(a,b){return Math.floor(rnd(a,b+1))}function clamp(v,a,b){return Math.max(a,Math.min(b,v))}function chance(p){return Math.random()<p}function choice(a){return a[Math.floor(Math.random()*a.length)]}function avg(a){return a&&a.length?a.reduce((x,y)=>x+y,0)/a.length:0}function posGroup(){return POSITION_GROUP[state.pos]}function clubByName(n){return CLUBS.find(c=>c.name===n)||CLUBS[0]}function currentClub(){return clubByName(state.club)}
+function euros(n){return '€ '+Math.round(n).toLocaleString('de-DE')}function millions(v){return '€ '+(v<10?v.toFixed(1):Math.round(v)).toString().replace('.',',')+' Mio.'}function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600)}
+function roleClass(n){return 'rolebadge role'+n}function seasonName(){return `${state.year}/${String(state.year+1).slice(-2)}`}
+function emptySeason(){return{
+  apps:0,goals:0,assists:0,clean:0,saves:0,tackles:0,ints:0,keypasses:0,shots:0,
+  ratings:[],match:0,minutes:0,teamPoints:0,teamPos:10,wins:0,draws:0,losses:0,
+  managerChanged:false,breakthrough:false,finalChecked:false,finalResolved:false,
+  trainingWeeks:0,lastTraining:0,roleMomentum:0,benchChances:0,objectives:[],
+  objectivesEvaluated:false,titlesWon:[],promotionsThisSeason:0
+}}
+function retirementWindow(mode,pos){const gk=pos==='TW',map={short:[32,36],realistic:[34,40],long:[37,43],marathon:[40,45]};let [min,max]=map[mode]||map.realistic;if(gk){min++;max+=2}return{min,max}}
+function ensureSeasonSystems(){if(!state.season.objectives||!state.season.objectives.length)state.season.objectives=generateTrainerObjectives();state.rumors??=[];state.national.tournamentHistory??=[];state.retirementMode??='realistic';const w=retirementWindow(state.retirementMode,state.pos);state.retirementMin??=w.min;state.retirementMax??=w.max;state.onLoan??=null}
+function generateTrainerObjectives(){
+  const g=posGroup(),role=state.roleLevel||2;
+  const appsTarget=[0,12,20,28,32][role],ratingTarget=[0,6.65,6.80,6.95,7.10][role];
+  const list=[
+    {type:'apps',target:appsTarget,label:`Mindestens ${appsTarget} Einsätze`},
+    {type:'rating',target:ratingTarget,label:`Saisonbewertung mindestens ${ratingTarget.toFixed(2)}`}
+  ];
+  if(g==='GK')list[0]={type:'clean',target:[0,5,8,11,14][role],label:`Mindestens ${[0,5,8,11,14][role]} Zu-null-Spiele`};
+  else if(g==='ST')list[0]={type:'goals',target:[0,7,11,15,20][role],label:`Mindestens ${[0,7,11,15,20][role]} Tore`};
+  else if(g==='WING'||g==='AM')list[0]={type:'goalContrib',target:[0,8,12,17,22][role],label:`Mindestens ${[0,8,12,17,22][role]} Tore + Vorlagen`};
+  else if(g==='MID')list[0]={type:'assists',target:[0,4,6,9,12][role],label:`Mindestens ${[0,4,6,9,12][role]} Vorlagen`};
+  else if(g==='DEF')list[0]={type:'tackles',target:[0,36,52,70,88][role],label:`Mindestens ${[0,36,52,70,88][role]} gewonnene Zweikämpfe`};
+  return list
+}
+function objectiveValue(o){if(o.type==='rating')return avg(state.season.ratings);if(o.type==='goalContrib')return state.season.goals+state.season.assists;return state.season[o.type]||0}
+function objectiveDisplay(o){const v=objectiveValue(o);return o.type==='rating'?`${v?v.toFixed(2):'–'} / ${o.target.toFixed(2)}`:`${Math.round(v)} / ${o.target}`}
+function renderObjectives(){ensureSeasonSystems();trainerObjectives.innerHTML=state.season.objectives.map(o=>{const v=objectiveValue(o),done=v>=o.target,p=clamp(v/o.target*100,0,100);return`<div class="objective-item ${done?'done':''}"><div class="objective-top"><strong>${done?'✓ ':''}${esc(o.label)}</strong><b>${objectiveDisplay(o)}</b></div><div class="objective-progress"><i style="width:${p}%"></i></div></div>`}).join('')}
+function evaluateTrainerObjectives(){
+  if(state.season.objectivesEvaluated)return;
+  state.season.objectivesEvaluated=true;
+  const achieved=state.season.objectives.filter(o=>objectiveValue(o)>=o.target).length;
+  if(achieved){
+    state.trust=clamp(state.trust+achieved*3,0,100);
+    state.roleMomentum+=achieved*.8;
+    state.reputation=clamp(state.reputation+achieved*.55,0,100);
+    addLog(`Trainerziele: ${achieved}/${state.season.objectives.length} erfüllt. Dein Standing verbessert sich leicht.`);
+  }else{
+    state.trust=clamp(state.trust-3,0,100);
+    state.roleMomentum-=1.1;
+    addLog('Trainerziele verfehlt. Du musst dich in der neuen Saison wieder beweisen.');
+  }
+  evaluateRoleProgress()
+}
+function renderRumors(){const rs=(state.rumors||[]).slice(0,4);transferRumors.innerHTML=rs.length?rs.map(r=>`<div class="rumor-item"><strong class="rumor-club">${esc(r.club)}</strong><small>${esc(r.text)}</small><small>Saison ${esc(r.season)}</small></div>`).join(''):'<div class="muted tiny">Aktuell gibt es keine konkreten Transfergerüchte.</div>'}
+function maybeTransferRumor(){if(state.onLoan||state.age>34||state.season.match<4||state.agentFocus==='loyalty')return;let p=.018+state.reputation/900+Math.max(0,state.form-60)/900+Math.max(0,avg(state.season.ratings)-7)*.045+(state.agentFocus==='bigClub'?.025:0);if(!chance(clamp(p,.015,.14)))return;let target=targetPrestige()+(state.agentFocus==='bigClub'?1:0);const club=pickClubNear(clamp(target+choice([-1,0,0,1]),1,10));if(!club)return;if((state.rumors||[]).some(r=>r.club===club.name&&r.year===state.year))return;const texts=[`${club.name} soll Scouts zu deinen letzten Spielen geschickt haben.`,`Medien berichten, dass ${club.name} deine Situation beobachtet.`,`Der Trainer von ${club.name} soll dich auf seiner Wunschliste haben.`];state.rumors??=[];state.rumors.unshift({club:club.name,year:state.year,season:seasonName(),text:choice(texts)});state.rumors=state.rumors.slice(0,6);state.rumorClub=club.name;addLog(`Transfergerücht: ${club.name} zeigt Interesse.`);addNews('TRANSFERGERÜCHT',`${club.name} beobachtet ${state.name}. Noch gibt es kein offizielles Angebot.`)}
+function countryStrength(country){return({Österreich:.57,Deutschland:.79,Kroatien:.69,Schweiz:.61,Italien:.75,Frankreich:.82,Spanien:.82,England:.80,Portugal:.75,Niederlande:.74,Belgien:.69,Brasilien:.83,Argentinien:.83}[country]||.52)}
+function isEuropeanCountry(country){return !['Brasilien','Argentinien'].includes(country)}
+function simulateNationalTournament(name){const av=avg(state.season.ratings)||6.7;let strength=countryStrength(state.country)+(state.overall-80)*.010+(av-6.8)*.06;strength=clamp(strength,.40,.90);const stages=['Gruppenphase','Achtelfinale','Viertelfinale','Halbfinale','Finale'],hist={year:state.year+1,name,result:'Gruppenphase'};let games=3,alive=chance(clamp(strength+.16,.55,.97));if(!alive){hist.result='Gruppenphase';state.national.tournamentHistory.unshift(hist);addLog(`${name}: Aus in der Gruppenphase.`);return}for(let i=1;i<stages.length;i++){games++;const winP=clamp(.37+(strength-.5)*.62+(state.overall-84)*.005,.27,.72);if(!chance(winP)){hist.result=stages[i];state.national.tournamentHistory.unshift(hist);state.national.caps+=games;addLog(`${name}: ${stages[i]} erreicht, dort ausgeschieden.`);return}}hist.result='Sieger';state.national.tournamentHistory.unshift(hist);state.national.caps+=games;if(name==='WM'){state.career.worldCups++;state.career.trophies.push(`${state.year+1}: Weltmeister`)}else{state.career.euros++;state.career.trophies.push(`${state.year+1}: ${name}-Sieger`)}state.national.trophies.push(`${state.year+1}: ${name}`);state.season.titlesWon.push(name);addLog(`${name}: Titelgewinn mit ${state.country}!`);toast(`${name} gewonnen!`)}
+function maybeReturnFromLoan(){if(!state.onLoan||state.year<state.onLoan.returnYear)return;const loanClub=state.club,parent=clubByName(state.onLoan.parentClub),oldSince=state.onLoan.parentClubSince;state.club=state.onLoan.parentClub;state.clubSince=oldSince;state.salary=state.onLoan.parentSalary;state.roleLevel=clamp(determineRole(parent,.7),1,4);state.trust=clamp(55+(state.overall-parent.squad)*1.4,38,78);state.onLoan=null;state.captain=false;addLog(`Leihe beendet: Rückkehr von ${loanClub} zu ${state.club}. Neue Rolle: ${ROLE_NAMES[state.roleLevel]}.`)}
+function marketValue(){let ageFactor=state.age<=23?1.35:state.age<=29?1:Math.max(.45,1-(state.age-29)*.07);return Math.max(.08,Math.pow(state.overall/61,7.2)*ageFactor*(1+state.reputation/135))}
+function wageFor(club,role=2){const roleF=[0,.72,.9,1.08,1.28][role];return Math.max(180,150*club.prestige*club.prestige*Math.pow(state.overall/60,5)*club.wage*roleF)}
+function determineRole(club,bias=0,ovr=null){const value=ovr??state?.overall??60;const diff=value-club.squad+bias;if(diff>=4)return 4;if(diff>=-2)return 3;if(diff>=-7)return 2;return 1}
+function actualPlayChance(){let p=ROLE_PLAY[state.roleLevel]+(state.trust-50)*.0032+(state.form-50)*.0015+(state.coach?.relationship-50)*.0017;const av=avg(state.season.ratings)||6.4,cr=state.competitor?.rating||6.6,co=state.competitor?.ovr||state.overall;p+=(state.overall-co)*.008+(av-cr)*.045;if(state.roleLevel===1)p+=.04;if(state.injured>0)return 0;return clamp(p,.08,.985)}
+function addLog(text){state.log.unshift({year:state.year,text});state.log=state.log.slice(0,140)}
+function save(){if(!state)return;localStorage.setItem(SAVE_KEY,JSON.stringify(state));document.getElementById('savePill').textContent='Spielerkarriere gespeichert';document.getElementById('continueBtn').classList.remove('hidden')}
+function load(){try{const v5=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(v5)return normalize(v5);const v4=JSON.parse(localStorage.getItem(OLD_SAVE_KEY4)||'null');if(v4)return normalize(v4);const v3=JSON.parse(localStorage.getItem(OLD_SAVE_KEY3)||'null');if(v3)return normalize(v3);const v2=JSON.parse(localStorage.getItem(OLD_SAVE_KEY2)||'null');if(v2)return normalize(v2);const v1=JSON.parse(localStorage.getItem(OLD_SAVE_KEY)||'null');if(v1)return migrateV1(v1)}catch(e){console.error(e)}return null}
+function normalize(s){s.version=5.1;s.clubSince??=s.year;s.roleLevel??=determineRole(clubByName(s.club));s.salary??=wageFor(clubByName(s.club),s.roleLevel);s.contractYears??=2;s.captain??=false;s.transferRequest??=false;s.forceTransfer??=false;s.startYear??=2026;s.initialOverall??=s.overall||60;s.injured??=0;s.injuryName??='';s.totalInjuryGames??=0;s.peakOverall??=s.overall||60;s.peakAge??=(s.pos==='TW'?rndi(28,33):rndi(26,31));s.declineRate??=(s.pos==='TW'?rnd(.38,.85):rnd(.55,1.2));s.retirementMode??='realistic';const rw=retirementWindow(s.retirementMode,s.pos);s.retirementMin??=rw.min;s.retirementMax??=rw.max;s.onLoan??=null;s.rumors??=[];s.rumorClub??='';s.season=Object.assign(emptySeason(),s.season||{});s.roleMomentum??=s.season.roleMomentum??0;s.lastTraining??=s.season.lastTraining??0;s.roleCooldown??=0;s.lastSquadReview??=null;s.national??={level:'Keine',caps:s.career?.caps||0,goals:s.career?.intGoals||0,trophies:[],tournamentHistory:[]};s.national.trophies??=[];s.national.tournamentHistory??=[];s.career??={};s.career.apps??=0;s.career.goals??=0;s.career.assists??=0;s.career.clean??=0;s.career.clubs??=[s.club];s.career.transfers??=[];s.career.trophies??=[];s.career.history??=[];s.career.awards??={ballon:0,goldenBoy:0,goldenBoot:0,bestGK:0,playerSeason:0,tots:0};s.career.awardHistory??=[];s.career.leagueTitles??=0;s.career.cupTitles??=0;s.career.clTitles??=0;s.career.worldCups??=0;s.career.euros??=0;s.log??=[];s.playStyle??=defaultStyleFor(s.pos);s.positionHistory??=[s.pos];s.agentFocus??='balanced';s.coach??=makeCoach(s.year||2026);s.coach.relationship??=55;s.competitor??=makeCompetitor(s.club,s.pos);s.clubStats??={};s.clubStats[s.club]??={apps:0,goals:0,assists:0,clean:0};s.milestones??={};s.news??=[];s.story??='Auf dem Weg';s.storyHistory??=[];s.bigGames??=0;s.specialMoments??=0;s.peakOverall=Math.max(s.peakOverall||0,s.overall||0);return s}
+function migrateV1(o){const club=clubByName(o.club);const s={...o,version:2,startYear:2026,clubSince:o.year||2026,peakAge:pPos.value==='TW'?rndi(28,33):rndi(26,31),declineRate:pPos.value==='TW'?rnd(.38,.85):rnd(.55,1.2),roleLevel:determineRole(club,0,o.overall),salary:900,contractYears:o.contractYears||2,captain:false,transferRequest:false,forceTransfer:false,national:{level:(o.career?.caps||0)>0?'A-Team':'Keine',caps:o.career?.caps||0,goals:o.career?.intGoals||0,trophies:[]}};state=s;s.salary=wageFor(club,s.roleLevel);state=null;s.career=Object.assign({apps:0,goals:0,assists:0,clean:0,clubs:[s.club],transfers:[],trophies:[],history:[],awardHistory:[],leagueTitles:0,cupTitles:0,clTitles:0,worldCups:0,euros:0,awards:{ballon:o.career?.ballons||0,goldenBoy:0,goldenBoot:0,bestGK:0,playerSeason:0,tots:0}},o.career||{});s.career.awards??={ballon:o.career?.ballons||0,goldenBoy:0,goldenBoot:0,bestGK:0,playerSeason:0,tots:0};s.season=Object.assign(emptySeason(),o.season||{});s.log=o.log||[];return normalize(s)}
+function goHome(){home.classList.remove('hidden');setup.classList.add('hidden');game.classList.add('hidden');document.getElementById('managerSetup')?.classList.add('hidden');document.getElementById('managerGame')?.classList.add('hidden')}function showSetup(){home.classList.add('hidden');document.getElementById('managerSetup')?.classList.add('hidden');document.getElementById('managerGame')?.classList.add('hidden');setup.classList.remove('hidden');updateStyleOptions()}function continueCareer(){state=load();if(!state)return;home.classList.add('hidden');setup.classList.add('hidden');document.getElementById('managerSetup')?.classList.add('hidden');document.getElementById('managerGame')?.classList.add('hidden');game.classList.remove('hidden');save();render()}
+function startCareer(){const start=pStart.value,club=start==='academy'?'Austria Nachwuchsakademie':'SV Heimat',base=start==='academy'?59:56,retMode=pRetirement.value||'realistic',rw=retirementWindow(retMode,pPos.value);state={version:5.1,startYear:2026,name:pName.value.trim()||'Spieler',country:pCountry.value,pos:pPos.value,number:+pNumber.value||10,foot:pFoot.value,playStyle:(document.getElementById('pStyle')?.value||defaultStyleFor(pPos.value)),startPath:start,retirementMode:retMode,retirementMin:rw.min,retirementMax:rw.max,age:16,year:2026,club,clubSince:2026,overall:clamp(base+rndi(-2,2),50,65),potential:rollPotential(start),peakAge:pPos.value==='TW'?rndi(28,33):rndi(26,31),declineRate:pPos.value==='TW'?rnd(.38,.85):rnd(.55,1.2),form:50,trust:start==='academy'?48:65,reputation:4,contractYears:start==='academy'?3:2,injured:0,injuryName:'',totalInjuryGames:0,captain:false,transferRequest:false,forceTransfer:false,roleMomentum:0,lastTraining:0,roleCooldown:0,lastSquadReview:null,onLoan:null,rumors:[],rumorClub:'',agentFocus:'balanced',positionHistory:[pPos.value],clubStats:{},milestones:{},news:[],story:'Auf dem Weg',storyHistory:[],bigGames:0,specialMoments:0,season:emptySeason(),national:{level:'Keine',caps:0,goals:0,trophies:[],tournamentHistory:[]},career:{apps:0,goals:0,assists:0,clean:0,clubs:[club],transfers:[],trophies:[],history:[],awardHistory:[],awards:{ballon:0,goldenBoy:0,goldenBoot:0,bestGK:0,playerSeason:0,tots:0},leagueTitles:0,cupTitles:0,clTitles:0,worldCups:0,euros:0},log:[],retired:false};state.initialOverall=state.overall;state.peakOverall=state.overall;state.roleLevel=determineRole(currentClub(),start==='local'?3:0);state.salary=wageFor(currentClub(),state.roleLevel);state.coach=makeCoach(2026);state.competitor=makeCompetitor(club,state.pos);state.clubStats[club]={apps:0,goals:0,assists:0,clean:0};ensureSeasonSystems();addLog(`Karriere gestartet bei ${club} als ${ROLE_NAMES[state.roleLevel]}.`);addNews('DER TRAUM BEGINNT',`${state.name} startet mit 16 Jahren bei ${club}. Spielertyp: ${state.playStyle}.`);setup.classList.add('hidden');game.classList.remove('hidden');home.classList.add('hidden');save();render()}
+function formInfo(v){if(v>=82)return['Überragend','good'];if(v>=67)return['Sehr gut','good'];if(v>=50)return['Gut',''];if(v>=34)return['Durchschnitt','warn'];return['Schwach','bad']}
+function positionSeasonStats(){const g=posGroup();if(g==='GK')return[['Paraden',state.season.saves],['Zu Null',state.season.clean]];if(g==='DEF')return[['Zweikämpfe',state.season.tackles],['Interceptions',state.season.ints]];if(g==='MID')return[['Zweikämpfe',state.season.tackles],['Schlüsselpässe',state.season.keypasses]];return[['Schüsse',state.season.shots],['Schlüsselpässe',state.season.keypasses]]}
+function render(){if(!state)return;ensureSeasonSystems();const av=avg(state.season.ratings),m=marketValue();nameEl.textContent=state.name;clubLine.textContent=`#${state.number} · ${state.pos} · ${state.club}`;chips.innerHTML=`<span class="chip">${esc(state.country)}</span><span class="chip">${state.foot}fuß</span><span class="chip">Seit ${state.clubSince} beim Verein</span><span class="chip gold">${state.age} Jahre</span>`;ovr.textContent=state.overall;age.textContent=state.age;reputation.textContent=Math.round(state.reputation);market.textContent=millions(m);trust.textContent=Math.round(state.trust);retirementInfo.textContent=state.age<state.retirementMin?`Karriereende: Rücktritt frühestens ab ${state.retirementMin}, spätestens mit ${state.retirementMax}.`:`Karriereende: Du bist im möglichen Rücktrittsfenster (${state.retirementMin}–${state.retirementMax}).`;const fi=formInfo(state.form);formText.textContent=fi[0];formText.className=fi[1];formMeter.style.width=clamp(state.form,1,100)+'%';roleBadge.textContent=ROLE_NAMES[state.roleLevel];roleBadge.className=roleClass(state.roleLevel);salary.textContent=euros(state.salary);contractYears.textContent=state.contractYears===1?'1 Jahr':state.contractYears+' Jahre';contractUntil.textContent=state.year+state.contractYears;captain.textContent=state.captain?'Ja':'Nein';if(state.onLoan){loanInfo.classList.remove('hidden');loanInfo.textContent=`Leihe von ${state.onLoan.parentClub} · Rückkehr nach dieser Saison. Dein Stammvertrag läuft weiter.`}else loanInfo.classList.add('hidden');const pc=Math.round(actualPlayChance()*100);playChanceLabel.textContent=pc+'%';playChanceMeter.style.width=pc+'%';const needRole=rolePromotionNeed(state.roleLevel),rp=clamp(Math.max(0,state.roleMomentum||0)/needRole*100,0,100);roleProgressLabel.textContent=state.roleLevel===4?'Maximale Rolle':(state.roleMomentum<0?'Unter Druck':Math.round(rp)+'%');roleProgressMeter.style.width=(state.roleLevel===4?100:rp)+'%';trainingRating.textContent=state.lastTraining?state.lastTraining.toFixed(1):'–';transferRequestBtn.disabled=state.transferRequest||state.contractYears<=0||!!state.onLoan;transferRequestBtn.textContent=state.onLoan?'Während Leihe nicht möglich':state.transferRequest?'Transferwunsch aktiv':'Transferwunsch äußern';seasonLabel.textContent='Saison '+seasonName();apps.textContent=state.season.apps;goals.textContent=posGroup()==='GK'?state.season.clean:state.season.goals;gLabel.textContent=posGroup()==='GK'?'Zu Null':'Tore';assists.textContent=posGroup()==='GK'?state.season.saves:state.season.assists;aLabel.textContent=posGroup()==='GK'?'Paraden':'Vorlagen';avgRating.textContent=av?av.toFixed(2):'-';teamPos.textContent=state.season.teamPos?state.season.teamPos+'.':'-';seasonMinutes.textContent=state.season.minutes;const ps=positionSeasonStats();positionStat1Label.textContent=ps[0][0];positionStat1.textContent=ps[0][1];positionStat2Label.textContent=ps[1][0];positionStat2.textContent=ps[1][1];renderObjectives();renderRumors();ntCountry.textContent=state.country;ntLevel.textContent=state.national.level==='Keine'?'Keine Nominierung':state.national.level;ntSub.textContent=state.national.level==='Keine'?'Noch nicht nominiert':state.national.level==='U21'?'Im Nachwuchs-Nationalteam':'A-Nationalmannschaft';caps.textContent=state.national.caps;intGoals.textContent=state.national.goals;ntTrophies.textContent=(state.career.worldCups+state.career.euros)+' Titel';const th=state.national.tournamentHistory||[];nationalTournamentInfo.textContent=th.length?`Letztes Turnier: ${th[0].name} ${th[0].year} – ${th[0].result}`:'Noch kein großes Turnier gespielt.';const a=state.career.awards;ballons.textContent=a.ballon;goldenBoys.textContent=a.goldenBoy;goldenBoots.textContent=a.goldenBoot;bestGK.textContent=a.bestGK;playerSeason.textContent=a.playerSeason;tots.textContent=a.tots;careerApps.textContent=state.career.apps;careerGoals.textContent=state.career.goals;careerAssists.textContent=state.career.assists;careerTrophies.textContent=state.career.trophies.length;trophyList.innerHTML=state.career.trophies.slice(-10).map(t=>`<span class="chip gold">🏆 ${esc(t)}</span>`).join('')||'<span class="muted tiny">Noch keine Titel</span>';renderSquadReview();log.innerHTML=state.log.map(x=>`<div class="logitem"><div class="logyear">${x.year}</div><div class="logtext">${esc(x.text)}</div></div>`).join('');renderNext();save()}
+const OPP=['FC Adler','SV Nord','Union City','Athletic 04','Dynamo West','FC Blau-Weiß','Sporting Süd','Racing Club','Eintracht 1912','Real Union','SC Viktoria','Olympia FC'];
+function renderNext(){
+  if(state.season.match>=PLAYER_SEASON_MATCHES){
+    nextMatch.innerHTML='<div class="week">SAISON BEENDET</div><div class="teams">Saisonabschluss</div><div class="muted tiny">Auszeichnungen, Entwicklung und Verträge werden ausgewertet.</div>';
+    return
+  }
+  const ctx=getMatchContext(),opp=matchOpponent();
+  nextMatch.className='matchbox'+(ctx.big?' bigmatch':'');
+  nextMatch.innerHTML=`<div class="fixture"><div><div class="week">${ctx.label} · LIGASPIEL ${state.season.match+1}/${PLAYER_SEASON_MATCHES}</div><div class="teams">${esc(state.club)} <span class="muted">vs.</span> ${esc(opp)}</div>${ctx.big?`<div class="goldtext tiny" style="margin-top:5px">${esc(ctx.reason)}</div>`:''}</div><span class="chip">${ROLE_NAMES[state.roleLevel]}</span></div>`
+}
+function simulatePerformance(minutes=90){
+  const g=posGroup(),quality=(state.overall-55)/40+state.form/220,club=currentClub(),scale=minutes/90,sm=styleMods();
+  let perf={goals:0,assists:0,saves:0,clean:0,tackles:0,ints:0,keypasses:0,shots:0,shotsFaced:0};
+  let teamGoals=Math.max(0,Math.round(rnd(.15,2.35)+club.prestige*.055+quality*.25));
+  let oppGoals=Math.max(0,Math.round(rnd(.15,2.15)-club.prestige*.04-quality*.10));
+
+  if(g==='ST'){
+    perf.shots=rndi(1,6);
+    const scoreP=clamp((.17+quality*.22+club.prestige*.012)*sm.goal,.10,.72);
+    if(chance(scoreP)){
+      perf.goals=1;
+      if(chance(clamp(.055+quality*.055,.05,.17)))perf.goals++;
+      if(perf.goals===2&&chance(.025))perf.goals++;
+    }
+    perf.goals=Math.min(teamGoals,perf.goals);
+    perf.assists=chance((.12+quality*.075)*sm.assist)?1:0;
+    perf.keypasses=rndi(0,2);
+  }else if(g==='WING'||g==='AM'){
+    perf.shots=rndi(1,5);
+    perf.goals=Math.min(teamGoals,chance(clamp((.13+quality*.14)*sm.goal,.08,.52))?1+(chance(.045)?1:0):0);
+    perf.assists=chance(clamp((.18+quality*.14)*sm.assist,.10,.55))?1:0;
+    perf.keypasses=Math.round(rndi(1,4)*sm.create);
+  }else if(g==='MID'){
+    perf.shots=rndi(0,3);
+    perf.goals=Math.min(teamGoals,chance(clamp((.05+quality*.055)*sm.goal,.03,.25))?1:0);
+    perf.assists=chance(clamp((.14+quality*.10)*sm.assist,.08,.42))?1:0;
+    perf.keypasses=Math.round(rndi(1,4)*sm.create);
+    perf.tackles=Math.round(rndi(1,5)*sm.def);
+  }else if(g==='DEF'){
+    perf.goals=Math.min(teamGoals,chance(clamp((.025+quality*.018)*sm.goal,.015,.11))?1:0);
+    perf.assists=chance(clamp((.05+quality*.035)*sm.assist,.025,.20))?1:0;
+    perf.tackles=Math.round(rndi(2,7)*sm.def);
+    perf.ints=Math.round(rndi(1,5)*sm.def);
+    perf.clean=oppGoals===0?1:0;
+  }else{
+    perf.shotsFaced=Math.max(2,rndi(3,9)+Math.max(0,5-club.prestige));
+    const expectedSaves=Math.max(1,perf.shotsFaced-oppGoals);
+    perf.saves=clamp(expectedSaves+rndi(-1,1)+Math.round((state.overall-60)/20)+sm.gk,1,perf.shotsFaced);
+    oppGoals=Math.max(0,perf.shotsFaced-perf.saves);
+    if(oppGoals>3&&chance(.40))oppGoals--;
+    perf.clean=oppGoals===0?1:0;
+  }
+
+  if(minutes<90&&g!=='GK'){
+    perf.shots=Math.round(perf.shots*scale);
+    perf.goals=chance(scale)?perf.goals:0;
+    perf.assists=chance(scale)?perf.assists:0;
+    perf.keypasses=Math.round(perf.keypasses*scale);
+    perf.tackles=Math.round(perf.tackles*scale);
+    perf.ints=Math.round(perf.ints*scale)
+  }
+
+  let rating=6.12+rnd(-.52,.46);
+  if(g==='ST')rating+=perf.goals*.78+perf.assists*.45+Math.min(.22,perf.shots*.035);
+  if(g==='WING'||g==='AM')rating+=perf.goals*.72+perf.assists*.58+perf.keypasses*.075;
+  if(g==='MID')rating+=perf.goals*.62+perf.assists*.55+perf.keypasses*.075+perf.tackles*.04;
+  if(g==='DEF')rating+=perf.clean*.42+perf.tackles*.052+perf.ints*.065+perf.goals*.62;
+  if(g==='GK'){
+    const savePct=perf.shotsFaced?perf.saves/perf.shotsFaced:0;
+    rating=6.10+rnd(-.30,.30)+Math.min(.55,perf.saves*.07)+perf.clean*.34+Math.max(0,savePct-.70)*1.05-Math.max(0,oppGoals-1)*.15+sm.rating;
+    if(perf.shotsFaced>=6&&oppGoals<=1)rating+=.14
+  }
+  if(g!=='GK')rating+=(state.overall-70)*.006+(state.form-50)*.004+sm.rating*.75;
+  else rating+=(state.form-50)*.0035;
+  if(minutes<90&&g!=='GK')rating=6.10+(rating-6.10)*.72;
+  return{perf,rating:clamp(rating,4.5,9.8),teamGoals,oppGoals,opp:matchOpponent(),minutes}
+}
+function trainingWeek(){
+  if((state.roleCooldown||0)>0)state.roleCooldown--;
+  const coachBonus=(state.coach?.relationship-50)*.005;
+  const base=6.35+(state.potential-state.overall)*.008+(state.form-50)*.004+coachBonus+rnd(-.82,.82);
+  const r=clamp(base,4.7,9.1);
+  state.lastTraining=r;state.season.lastTraining=r;state.season.trainingWeeks++;
+  if(r>=8.3)state.roleMomentum+=.65;
+  else if(r>=7.5)state.roleMomentum+=.30;
+  else if(r>=7.0)state.roleMomentum+=.10;
+  else if(r<5.5)state.roleMomentum-=.8;
+  else if(r<6.0)state.roleMomentum-=.35;
+  state.trust=clamp(state.trust+(r-6.45)*.25,0,100);
+  if(state.coach)state.coach.relationship=clamp(state.coach.relationship+(r-6.5)*.10,10,98);
+  return r
+}
+function evaluateRoleProgress(){
+  const old=state.roleLevel;
+  if((state.roleCooldown||0)>0)return false;
+
+  const av=avg(state.season.ratings)||0;
+  const comp=state.competitor||{ovr:state.overall,rating:6.6};
+  const need=rolePromotionNeed(state.roleLevel);
+  let eligible=false;
+
+  if(state.roleLevel===1){
+    eligible=state.season.apps>=8&&av>=6.70&&state.trust>=58;
+  }else if(state.roleLevel===2){
+    eligible=state.season.apps>=16&&av>=6.88&&state.trust>=65 &&
+      (state.overall>=comp.ovr-5||av>=comp.rating+.22);
+  }else if(state.roleLevel===3){
+    eligible=state.season.apps>=24&&av>=7.08&&state.trust>=73 &&
+      (state.overall>=comp.ovr-3||av>=comp.rating+.32);
+  }
+
+  if(state.roleMomentum>=need&&state.roleLevel<4&&eligible&&(state.season.promotionsThisSeason||0)<1){
+    state.roleLevel++;
+    state.season.promotionsThisSeason=(state.season.promotionsThisSeason||0)+1;
+    state.roleMomentum=0;
+    state.roleCooldown=14;
+    state.salary=Math.max(state.salary,wageFor(currentClub(),state.roleLevel)*.9);
+    addLog(`Du überzeugst den Trainer über längere Zeit: Beförderung zum ${ROLE_NAMES[state.roleLevel]}.`);
+    addNews('MEHR VERANTWORTUNG',`${state.name} arbeitet sich bei ${state.club} zum ${ROLE_NAMES[state.roleLevel]} hoch.`);
+    toast(`Neue Rolle: ${ROLE_NAMES[state.roleLevel]}`);
+  }else if(state.roleMomentum<=-8&&state.roleLevel>1){
+    state.roleLevel--;
+    state.roleMomentum=0;
+    state.roleCooldown=10;
+    addLog(`Nach längerer schwacher Phase wirst du zum ${ROLE_NAMES[state.roleLevel]} zurückgestuft.`);
+    addNews('STAMMPLATZ IN GEFAHR',`${state.name} wird nach einer schwächeren Phase zum ${ROLE_NAMES[state.roleLevel]} zurückgestuft.`);
+    toast(`Rolle geändert: ${ROLE_NAMES[state.roleLevel]}`)
+  }
+  return old!==state.roleLevel
+}
+function reserveChance(){if(state.injured>0)return false;const p=state.roleLevel===1?.24:state.roleLevel===2?.13:.05;return chance(p+(state.trust-50)*.0015)}
+function playMatch(){
+  if(!state||state.retired||!eventModal.classList.contains('hidden'))return;
+  if(state.season.match>=PLAYER_SEASON_MATCHES){finishSeason();return}
+  state._matchContext=getMatchContext();
+  const tr=trainingWeek();
+
+  if(state.injured>0){
+    state.injured--;state.totalInjuryGames++;state.season.match++;
+    state.form=clamp(state.form-.4,5,100);
+    addLog(`Verletzung: ${state.name} verpasst ein Spiel${state.injuryName?' ('+state.injuryName+')':''}.`);
+    updateTable(rndi(0,3));evaluateRoleProgress();
+    if(state.season.match>=PLAYER_SEASON_MATCHES)finishSeason();else render();
+    return
+  }
+
+  let starts=chance(actualPlayChance());
+  if(!starts&&reserveChance()){
+    state.season.benchChances++;
+    const mins=posGroup()==='GK'?90:rndi(18,38);
+    const data=simulatePerformance(mins);
+    if(posGroup()==='GK')addLog(`Trainerchance: Als Ersatztorwart bekommst du überraschend einen Start.`);
+    else addLog(`Einwechslung: Du bekommst ${mins} Minuten, um dich zu zeigen.`);
+    finalizePlayedMatch(data,true);return
+  }
+
+  if(!starts){
+    state.season.match++;
+    state.form=clamp(state.form+(tr-6.5)*.14,5,100);
+    addLog(`Nicht eingesetzt. Training ${tr.toFixed(1)} – gute Trainingswochen helfen, aber ein Aufstieg braucht längere Konstanz.`);
+    updateTable(rndi(0,3));evaluateRoleProgress();maybeManagerChange();maybeTransferRumor();updateCompetitor();
+    if(state.season.match>=PLAYER_SEASON_MATCHES)finishSeason();else render();
+    return
+  }
+
+  const data=simulatePerformance(90),g=posGroup();
+  const penaltyChance=(g==='GK'||['ST','WING','AM','MID'].includes(g)||state.captain)?.025:.007;
+  if(chance(penaltyChance)&&Math.abs(data.teamGoals-data.oppGoals)<=1){state.pendingMatch=data;openPenaltyEvent();return}
+  if(chance(state._matchContext?.big?.10:.04)&&Math.abs(data.teamGoals-data.oppGoals)<=1){state.pendingMatch=data;openSpecialMoment();return}
+  finalizePlayedMatch(data,false)
+}
+function finalizePlayedMatch(data,fromBench=false){
+  const{perf}=data;
+  state.season.match++;state.season.apps++;state.career.apps++;state.season.minutes+=data.minutes||90;
+  for(const k of['goals','assists','clean','saves','tackles','ints','keypasses','shots'])state.season[k]=(state.season[k]||0)+(perf[k]||0);
+  state.career.goals+=perf.goals||0;state.career.assists+=perf.assists||0;state.career.clean+=perf.clean||0;
+  state.season.ratings.push(data.rating);
+
+  state.form=clamp(state.form+(data.rating-6.5)*2.35+rnd(-1.2,1.2),5,100);
+  state.trust=clamp(state.trust+(data.rating-6.45)*1.35+rnd(-.5,.5),0,100);
+  state.reputation=clamp(state.reputation+Math.max(-.15,(data.rating-6.55)*.15)+(state._matchContext?.big&&data.rating>=7.4?.22:0),0,100);
+  if(state.coach)state.coach.relationship=clamp(state.coach.relationship+(data.rating-6.55)*.25,10,99);
+
+  if(data.rating>=8.5)state.roleMomentum+=1.25;
+  else if(data.rating>=7.8)state.roleMomentum+=.65;
+  else if(data.rating>=7.2)state.roleMomentum+=.25;
+  else if(data.rating<5.8)state.roleMomentum-=1.4;
+  else if(data.rating<6.2)state.roleMomentum-=.6;
+
+  const pts=data.teamGoals>data.oppGoals?3:data.teamGoals===data.oppGoals?1:0;updateTable(pts);
+  state.clubStats[state.club]??={apps:0,goals:0,assists:0,clean:0};
+  const cs=state.clubStats[state.club];cs.apps++;cs.goals+=perf.goals||0;cs.assists+=perf.assists||0;cs.clean+=perf.clean||0;
+
+  lastMatch.innerHTML=`<div class="matchbox${state._matchContext?.big?' bigmatch':''}"><div class="week">LETZTES SPIEL${fromBench?' · TRAINERCHANCE':''}${state._matchContext?.big?' · GROSSES SPIEL':''}</div><div class="match-result">${esc(state.club)} ${data.teamGoals}:${data.oppGoals} ${esc(data.opp)}</div><div class="matchstats"><div class="mini"><b>${data.rating.toFixed(1)}</b><small>Bewertung</small></div><div class="mini"><b>${posGroup()==='GK'?perf.saves:perf.goals}</b><small>${posGroup()==='GK'?'Paraden':'Tore'}</small></div><div class="mini"><b>${posGroup()==='GK'?perf.clean:perf.assists}</b><small>${posGroup()==='GK'?'Zu Null':'Vorlagen'}</small></div><div class="mini"><b>${data.minutes||90}</b><small>Minuten</small></div></div></div>`;
+  addLog(`Spiel: ${state.club} ${data.teamGoals}:${data.oppGoals} ${data.opp} – Bewertung ${data.rating.toFixed(1)}.`);
+
+  if(state._matchContext?.big){
+    state.bigGames++;
+    if(data.rating>=8.2)addNews('MANN DES GROSSEN SPIELS',`${state.name} liefert im ${state._matchContext.label.toLowerCase()} eine ${data.rating.toFixed(1)} ab.`)
+  }
+
+  if(chance(.018)){
+    const injuries=[['Muskelverletzung',rndi(1,3)],['Knöchelprellung',rndi(1,2)],['Zerrung',rndi(2,4)],['Knieprobleme',rndi(3,6)]];
+    const inj=choice(injuries);state.injuryName=inj[0];state.injured=inj[1];
+    addLog(`Verletzung: ${inj[0]} – Ausfall voraussichtlich ${inj[1]} Spiel(e).`);
+    if(inj[1]>=4)addNews('RÜCKSCHLAG',`${state.name} fällt mit ${inj[0]} mehrere Spiele aus.`)
+  }
+
+  checkMilestones();checkClubRecords();evaluateRoleProgress();updateCompetitor();maybeManagerChange();maybeTransferRumor();
+  if(state.season.match<PLAYER_SEASON_MATCHES)maybePositionChange();
+  if(state.season.match>=PLAYER_SEASON_MATCHES)finishSeason();else render()
+}
+function updateTable(points){state.season.teamPoints+=points;if(points===3)state.season.wins++;else if(points===1)state.season.draws++;else state.season.losses++;const ppg=state.season.teamPoints/Math.max(1,state.season.match),p=currentClub().prestige;state.season.teamPos=clamp(Math.round(18-(ppg*4.1+p*.58)+rnd(-1.1,1.1)),1,18)}
+function simulateGames(n){
+  const y=state.year;let i=0;
+  while(i<n&&state.year===y&&state.season.match<PLAYER_SEASON_MATCHES&&eventModal.classList.contains('hidden')){
+    playMatch();i++;
+    if(!offersModal.classList.contains('hidden')||state.year!==y)break
+  }
+}
+function simulateRest(){
+  const y=state.year;let guard=60;
+  while(state.year===y&&state.season.match<PLAYER_SEASON_MATCHES&&guard--&&eventModal.classList.contains('hidden')&&offersModal.classList.contains('hidden'))playMatch()
+}
+function maybeManagerChange(){
+  if(state.season.managerChanged||!chance(.0035))return;
+  state.season.managerChanged=true;
+  const old=state.coach?.name||'der bisherige Trainer',good=chance(.5);
+  state.coach=makeCoach(state.year);
+  state.coach.relationship=good?rndi(61,78):rndi(34,49);
+  state.trust=clamp(state.trust+(good?rndi(5,11):-rndi(5,11)),0,100);
+  state.roleMomentum+=good?1.2:-1.2;
+  addLog(`Trainerwechsel bei ${state.club}: ${state.coach.name} übernimmt. Du musst deine Kaderrolle neu bestätigen.`);
+  addNews('TRAINERWECHSEL',`${state.coach.name} übernimmt bei ${state.club}. Für ${state.name} beginnt der Kampf um Vertrauen neu.`);
+  if(chance(.35)){
+    const c=pickClubNear(clamp(currentClub().prestige+choice([-1,0,1]),1,10));
+    if(c&&c.name!==state.club){
+      state.rumors.unshift({club:c.name,year:state.year,season:seasonName(),text:`Ex-Trainer ${old} soll dich bei ${c.name} vorgeschlagen haben.`});
+      state.rumorClub=c.name
+    }
+  }
+  showInfoEvent('TRAINERWECHSEL','Neuer Trainer',good?'Der neue Trainer startet mit positivem Eindruck. Eine Beförderung musst du dir trotzdem über längere Zeit verdienen.':'Der neue Trainer setzt zunächst weniger auf dich. Du musst dich neu beweisen.')
+}
+function openPenaltyEvent(){const g=posGroup();eventTag.textContent='90. MINUTE';eventTitle.textContent=g==='GK'?'Elfmeter gegen dich!':'Elfmeter für dein Team!';eventText.textContent=g==='GK'?'Das Spiel steht auf der Kippe. Wohin springst du?':'Du bekommst den Ball. Wohin schießt du?';eventChoices.innerHTML=['Links','Mitte','Rechts'].map((x,i)=>`<button class="decision" onclick="resolvePenalty(${i})">${i===0?'⬅️':i===1?'⬆️':'➡️'} ${x}</button>`).join('');eventModal.classList.remove('hidden')}
+function resolvePenalty(dir){const d=state.pendingMatch,g=posGroup();if(!d)return;let text='';if(g==='GK'){const shot=rndi(0,2),save=dir===shot&&chance(clamp(.54+(state.overall-70)*.008,.38,.88));if(save){d.perf.saves++;d.rating=clamp(d.rating+.65,4,10);text='Gehalten! Du rettest dein Team in der Schlussphase.'}else{d.oppGoals++;d.rating=clamp(d.rating-.22,4,10);text='Der Schütze trifft. Du konntest den Elfmeter nicht halten.'}}else{const keeper=rndi(0,2),score=dir!==keeper||chance(clamp(.32+(state.overall-70)*.009,.22,.7));if(score){d.teamGoals++;d.perf.goals++;d.rating=clamp(d.rating+.58,4,10);text='Tor! Du verwandelst den Elfmeter in der 90. Minute.'}else{d.rating=clamp(d.rating-.35,4,10);text='Gehalten. Der Torwart pariert deinen Elfmeter.'}}eventModal.classList.add('hidden');state.pendingMatch=null;addLog(text);toast(text);finalizePlayedMatch(d)}
+function showInfoEvent(tag,title,text,after=null){eventTag.textContent=tag;eventTitle.textContent=title;eventText.textContent=text;eventChoices.innerHTML=`<button class="decision" onclick="closeInfoEvent()">Weiter</button>`;state._afterInfo=after;eventModal.classList.remove('hidden')}
+function closeInfoEvent(){eventModal.classList.add('hidden');const a=state._afterInfo;state._afterInfo=null;if(a==='finishSeason')finishSeason();render()}
+function requestTransfer(){if(state.contractYears<=0||state.transferRequest)return;eventTag.textContent='TRANSFERWUNSCH';eventTitle.textContent='Wie gehst du vor?';eventText.textContent=`Du hast noch ${state.contractYears} Jahr(e) Vertrag bei ${state.club}. Ein Wechsel ist nur möglich, wenn ein anderer Verein ein Kaufangebot abgibt.`;eventChoices.innerHTML=`<button class="decision" onclick="resolveTransferRequest(false)">🤝 Professionell bleiben<br><small class="muted">Weniger Ärger, etwas geringere Wechselchance</small></button><button class="decision" onclick="resolveTransferRequest(true)">🔥 Wechsel forcieren<br><small class="muted">Mehr Interesse, aber Trainervertrauen leidet</small></button><button class="decision" onclick="closeEventNoChange()">Bleiben</button>`;eventModal.classList.remove('hidden')}
+function resolveTransferRequest(force){state.transferRequest=true;state.forceTransfer=force;state.trust=clamp(state.trust-(force?14:5),0,100);addLog(force?'Transferstreit: Du forcierst öffentlich einen Wechsel.':'Du äußerst intern einen Transferwunsch.');eventModal.classList.add('hidden');render()}
+function closeEventNoChange(){eventModal.classList.add('hidden')}
+function development(){
+  const club=currentClub(),av=avg(state.season.ratings)||(posGroup()==='GK'?6.4:6.2);
+  let ageF;
+  if(state.age<state.peakAge-5)ageF=posGroup()==='GK'?1.00:1.08;
+  else if(state.age<state.peakAge)ageF=posGroup()==='GK'?.86:.78;
+  else if(state.age<=state.peakAge+2)ageF=.18;
+  else ageF=-state.declineRate;
+
+  const benchmark=posGroup()==='GK'?6.55:6.50;
+  let appFactor=state.season.apps/PLAYER_SEASON_MATCHES;
+  if(posGroup()==='GK')appFactor=Math.min(1,state.season.apps/28);
+
+  let growth=(av-benchmark)*1.10+appFactor*.88+(state.trust-50)/125+(state.lastTraining-6.5)*.10;
+  growth*=club.dev;
+
+  if(ageF<0)growth=Math.min(growth*.15,0)+ageF*rnd(.55,1.15);
+  else growth*=ageF;
+
+  if(state.overall>=88&&growth>0)growth*=.72;
+  if(state.overall>=92&&growth>0)growth*=.55;
+  if(state.overall>=95&&growth>0)growth*=.35;
+
+  const ceiling=state.potential||90;
+  if(state.overall>=ceiling&&growth>0)growth=0;
+
+  let ch=Math.round(clamp(growth,-3,3));
+  if(ch>0)ch=Math.min(ch,Math.max(0,ceiling-state.overall));
+  state.overall=clamp(state.overall+ch,40,99);
+  return ch
+}
+function nationalTeamSeason(){const av=avg(state.season.ratings);if(state.age<=21&&state.overall>=68&&av>=6.45){if(state.national.level==='Keine')state.national.level='U21';if(state.national.level==='U21'){const u=rndi(2,5);state.national.caps+=u;addLog(`U21-Nationalteam: ${u} Einsätze für ${state.country}.`)}}if(state.overall>=75&&av>=6.7&&state.season.apps>=12){if(state.national.level!=='A-Team'){state.national.level='A-Team';addLog(`Erste Nominierung für die A-Nationalmannschaft von ${state.country}!`);addNews('ERSTE A-NOMINIERUNG',`${state.name} wird erstmals für ${state.country} nominiert.`)}const capsNow=rndi(3,7);state.national.caps+=capsNow;let goals=0;if(['ST','WING','AM'].includes(posGroup()))goals=rndi(0,Math.max(1,Math.ceil(capsNow/2)));else if(posGroup()==='MID')goals=chance(.35)?1:0;state.national.goals+=goals;addLog(`Nationalmannschaft: ${capsNow} A-Länderspiele${goals?`, ${goals} Tor(e)`:''}.`)}checkMilestones();const y=state.year+1;if(state.national.level==='A-Team'){if((y-2030)%4===0)simulateNationalTournament('WM');if(isEuropeanCountry(state.country)&&(y-2028)%4===0)simulateNationalTournament('EM');if(!isEuropeanCountry(state.country)&&(y-2028)%4===0)simulateNationalTournament('Kontinentalmeisterschaft')}}
+function awardSeason(){
+  const av=avg(state.season.ratings),a=state.career.awards,stamp=seasonName(),titles=state.season.titlesWon||[];
+  function win(key,label){a[key]++;state.career.awardHistory.push({season:stamp,label});addLog(`Auszeichnung: ${label}.`);addNews(label.toUpperCase(),`${state.name} gewinnt ${label} in der Saison ${stamp}.`)}
+
+  if(state.age<=21&&state.overall>=80&&av>=7.35&&state.season.apps>=24){
+    const p=clamp(.045+(state.overall-80)*.012+(av-7.35)*.10+(titles.length?.025:0),.04,.22);
+    if(chance(p))win('goldenBoy','Golden Boy')
+  }
+  if(['ST','WING','AM'].includes(posGroup())&&state.season.goals>=22){
+    const p=clamp(.12+(state.season.goals-22)*.025,.12,.55);
+    if(chance(p))win('goldenBoot','Torschützenkönig')
+  }
+  if(posGroup()==='GK'&&state.season.clean>=13&&av>=7.10){
+    const p=clamp(.12+(state.season.clean-13)*.025+(av-7.1)*.10,.12,.48);
+    if(chance(p))win('bestGK','Bester Torhüter')
+  }
+  if(av>=7.28&&state.season.apps>=26&&chance(clamp(.20+(av-7.28)*.18,.18,.50)))win('tots','Team der Saison');
+  if(av>=7.65&&state.season.apps>=28&&chance(clamp(.075+(av-7.65)*.16+(titles.length?.025:0),.06,.28)))win('playerSeason','Spieler der Saison');
+
+  if(state.overall>=90&&av>=7.78&&state.season.apps>=28){
+    const major=titles.some(t=>['Champions League','WM','EM','Kontinentalmeisterschaft'].includes(t));
+    const exceptional=state.season.goals>=32||posGroup()==='GK'&&state.season.clean>=18;
+    let p=.010+(state.overall-90)*.010+(av-7.78)*.10+(major?.055:0)+(exceptional?.025:0)+(state.season.teamPos===1?.012:0);
+    p=clamp(p,.008,.16);
+    if(chance(p))win('ballon',"Ballon d'Or")
+  }
+}
+function clubTitles(){if(state.season.teamPos===1){state.career.leagueTitles++;state.career.trophies.push(`${seasonName()}: Meister mit ${state.club}`);state.season.titlesWon.push('Meisterschaft');addLog(`Meistertitel mit ${state.club}!`);addNews('MEISTER!',`${state.name} gewinnt mit ${state.club} die Meisterschaft.`)}}
+function maybeCaptain(){const tenure=state.year-state.clubSince;if(!state.captain&&state.age>=24&&tenure>=3&&state.trust>=80&&chance(.22)){state.captain=true;addLog(`Du wirst Kapitän von ${state.club}.`)}}
+function qualifiesForFinal(){const av=avg(state.season.ratings),p=currentClub().prestige;if(state.season.apps<12)return null;if(p>=8&&state.season.teamPos<=4&&av>=6.8&&chance(.16))return'Champions-League-Finale';if(chance(.12+p*.008))return'Pokalfinale';return null}
+function openFinalEvent(type){state.season.finalType=type;eventTag.textContent='FINALE';eventTitle.textContent=type;eventText.textContent='Ein Spiel entscheidet über einen Titel. Wie gehst du in das Finale?';eventChoices.innerHTML=`<button class="decision" onclick="resolveFinal('control')">🧠 Kontrolliert<br><small class="muted">Sicherer, weniger Risiko</small></button><button class="decision" onclick="resolveFinal('attack')">⚡ Offensiv<br><small class="muted">Mehr Chance, aber auch mehr Risiko</small></button><button class="decision" onclick="resolveFinal('calm')">🎯 Auf deine Stärke vertrauen<br><small class="muted">Ausgewogen</small></button>`;eventModal.classList.remove('hidden')}
+function resolveFinal(style){const type=state.season.finalType,av=avg(state.season.ratings),base=.34+currentClub().prestige*.025+(av-6.5)*.09+(state.overall-75)*.006;let mod=style==='attack'?rnd(-.09,.11):style==='control'?.025:.045;const win=chance(clamp(base+mod,.18,.78));if(win){if(type==='Champions-League-Finale'){state.career.clTitles++;state.career.trophies.push(`${seasonName()}: Champions League`);state.season.titlesWon.push('Champions League')}else{state.career.cupTitles++;state.career.trophies.push(`${seasonName()}: Pokalsieger`);state.season.titlesWon.push('Pokal')}addLog(`${type} gewonnen!`);toast('Titel gewonnen!')}else addLog(`${type} verloren.`);state.season.finalResolved=true;eventModal.classList.add('hidden');finishSeason()}
+function genericNames(){return ['Lukas Berger','David Huber','Noah Wagner','Felix Gruber','Leon Moser','Elias Hofer','Daniel Leitner','Marco Steiner','Julian Koch','Tobias Baumann','Nico Mayer','Samuel Wolf','Emil Schwarz','Alexander Haas','Matteo Rossi','Lucas Martin','Tomás Silva','Milan Jovanović','Ivan Kovač','Oscar Jensen','Hugo Pereira','Mats de Vries']}
+function buildSquadReview(stamp){const club=currentClub(),rows=[];const real=(REAL_CORE[state.club]||[]).map(x=>{const[n,p,o]=x.split('|');return{name:n,pos:p,ovr:+o,real:true}});real.forEach(p=>{const delta=(p.ovr-club.squad)*.015+rnd(-.45,.55);rows.push({...p,rating:clamp(6.55+delta,5.8,8.35)})});const names=genericNames().sort(()=>Math.random()-.5);const need=Math.max(11-real.length);for(let i=0;i<need;i++){const o=clamp(Math.round(club.squad+rndi(-6,5)),50,92),positions=['TW','IV','IV','LV','RV','ZDM','ZM','ZM','ZOM','LF','RF','ST'];rows.push({name:names[i%names.length],pos:positions[i%positions.length],ovr:o,real:false,rating:clamp(6.35+(o-club.squad)*.025+rnd(-.55,.65),5.5,8.4)})}rows.push({name:state.name,pos:state.pos,ovr:state.overall,real:false,me:true,rating:avg(state.season.ratings)||6.1});rows.sort((a,b)=>b.rating-a.rating);state.lastSquadReview={season:stamp,club:state.club,rows:rows.slice(0,16)}}
+function renderSquadReview(){if(!state.lastSquadReview){squadSeasonLabel.textContent='Wird nach deiner ersten Saison angezeigt';squadClubCount.textContent='';squadReview.innerHTML='<div class="muted tiny">Schließe eine Saison ab, um die Leistungen deines Teams zu vergleichen.</div>';return}const r=state.lastSquadReview;squadSeasonLabel.textContent=`${r.season} · ${r.club}`;squadClubCount.textContent=`${r.rows.length} Spieler`;squadReview.innerHTML=r.rows.map((p,i)=>`<div class="squad-row ${p.me?'me':''}"><div><div class="pname">${p.me?'★ ':''}${esc(p.name)}${p.real?' <span class="chip cyan" style="padding:2px 5px">Real</span>':''}</div><div class="ppos">${p.pos}${p.me?' · Du':''}</div></div><span class="ovr-pill">GES ${p.ovr}</span><span class="rating-pill ${p.rating>=7.25?'top':p.rating<6.2?'low':''}">${p.rating.toFixed(2)}</span></div>`).join('')}
+function careerScore(){
+  const c=state.career,a=c.awards,totalGames=c.apps+state.national.caps;
+  let score=28+Math.min(23,(state.peakOverall||state.overall)*.17)+Math.min(18,c.trophies.length*1.45)+a.ballon*5+c.worldCups*6+c.euros*4+c.clTitles*3+Math.min(11,totalGames/95);
+  if(['ST','WING','AM'].includes(posGroup()))score+=Math.min(12,(c.goals+state.national.goals)/70)+Math.min(6,c.assists/90);
+  else if(posGroup()==='GK')score+=Math.min(10,c.clean/48);
+  else score+=Math.min(8,c.assists/65)+Math.min(5,c.goals/50);
+  return clamp(Math.round(score),35,99)
+}
+function legendGroup(){const g=posGroup();if(g==='GK')return'GK';if(g==='DEF')return'DEF';if(g==='MID'||g==='AM')return'MID';return'ATT'}
+function careerComparisons(){const score=careerScore(),pool=LEGEND_BENCHMARKS[legendGroup()].slice().sort((a,b)=>a.score-b.score);const below=pool.filter(x=>x.score<=score),above=pool.filter(x=>x.score>score);let lower=below.length?below[below.length-1]:pool[0],higher=above.length?above[0]:pool[pool.length-1];let lowerLabel=below.length?'Vergleich darunter':'Nächste Legende',higherLabel=above.length?'Vergleich darüber':'Höchster Vergleich';if(lower===higher&&pool.length>1){if(score<pool[0].score)higher=pool[1];else lower=pool[pool.length-2]}return{score,lower,higher,lowerLabel,higherLabel}}
+function finishSeason(){if(state._finishing)return;if(!state.season.finalChecked){state.season.finalChecked=true;const f=qualifiesForFinal();if(f){openFinalEvent(f);return}}state._finishing=true;const stamp=seasonName(),av=avg(state.season.ratings);buildSquadReview(stamp);clubTitles();nationalTeamSeason();evaluateTrainerObjectives();awardSeason();maybeCaptain();const before=state.overall,ch=development();state.peakOverall=Math.max(state.peakOverall,state.overall);state.career.history.push({season:stamp,club:state.club,ovrBefore:before,ovrAfter:state.overall,apps:state.season.apps,goals:state.season.goals,assists:state.season.assists,rating:av,role:ROLE_NAMES[state.roleLevel],training:state.lastTraining,onLoan:!!state.onLoan,story:updateCareerStory()});addLog(`Saison ${stamp} beendet: Ø ${av?av.toFixed(2):'-'}, Entwicklung ${ch>=0?'+':''}${ch} GES.`);state.contractYears=Math.max(0,state.contractYears-1);state.age++;state.year++;updateCareerStory();updateCompetitor(true);maybeReturnFromLoan();if(shouldRetire()){state._finishing=false;retireCareer(true);return}prepareTransferWindow();save();render()}
+function shouldRetire(){if(state.age<state.retirementMin)return false;if(state.age>=state.retirementMax)return true;const span=Math.max(1,state.retirementMax-state.retirementMin),progress=(state.age-state.retirementMin)/span;let p=.035+progress*.48;if(state.overall>=82)p-=.05;if(state.form>=65)p-=.025;if(state.injured>=4)p+=.035;return chance(clamp(p,.02,.62))}
+function targetPrestige(){const av=avg(state.season.ratings);let t=(state.overall-52)/4.4+state.reputation/32+(av>=7.3?.7:av<6.3?-.7:0);if(state.agentFocus==='bigClub')t+=1;if(state.agentFocus==='playingTime')t-=.6;return clamp(Math.round(t),1,10)}
+function pickClubNear(target,used=[]){let arr=CLUBS.filter(c=>c.name!==state.club&&!used.includes(c.name)).sort((a,b)=>Math.abs(a.prestige-target)-Math.abs(b.prestige-target)+rnd(-.35,.35));return arr[0]}
+function createOffer(club,kind='free'){let role=determineRole(club,kind==='free'?rnd(-1,2):rnd(-2,1));if(state.agentFocus==='playingTime')role=Math.max(role,3);let years=rndi(2,5),salary=wageFor(club,role)*rnd(.9,1.12)*(state.agentFocus==='salary'?1.18:1);return{id:Math.random().toString(36).slice(2,9),club:club.name,country:club.country,prestige:club.prestige,kind,roleLevel:role,years,salary,fee:kind==='bid'?marketValue()*rnd(1.05,1.45):0,negotiated:false,status:''}}
+function createLoanOffer(){const parent=currentClub(),target=clamp(parent.prestige+choice([-2,-1,-1,0]),1,10),used=[state.club],candidates=CLUBS.filter(c=>c.name!==state.club&&Math.abs(c.prestige-target)<=2&&determineRole(c,2)>=3).sort((a,b)=>Math.abs(a.squad-state.overall)-Math.abs(b.squad-state.overall)+rnd(-2,2));const club=candidates[0]||pickClubNear(target,used);if(!club)return null;const role=Math.max(3,determineRole(club,2));return{id:'loan_'+Math.random().toString(36).slice(2,8),club:club.name,country:club.country,prestige:club.prestige,kind:'loan',roleLevel:role,years:1,salary:state.salary,fee:0,negotiated:true,status:'Nach einer Saison kehrst du automatisch zu deinem Stammverein zurück.'}}
+function prepareTransferWindow(){const active=state.contractYears>0,target=targetPrestige(),offers=[];if(active){offers.push({id:'stay',club:state.club,country:currentClub().country,prestige:currentClub().prestige,kind:'continue',roleLevel:state.roleLevel,years:state.contractYears,salary:state.salary,fee:0,negotiated:true,status:''});let av=avg(state.season.ratings),p=.05+state.reputation/270+Math.max(0,av-6.9)*.15+(state.transferRequest?.15:0)+(state.forceTransfer?.15:0)+(state.rumorClub?.055:0)+(state.age<=23?.03:0);let bids=0;if(chance(clamp(p,.04,.52)))bids=1;if(bids&&chance(.24+state.reputation/280))bids=2;const used=[];for(let i=0;i<bids;i++){let club=null;if(i===0&&state.rumorClub&&chance(.48)){const rc=clubByName(state.rumorClub);if(rc.name!==state.club&&Math.abs(rc.prestige-target)<=3)club=rc}club=club||pickClubNear(target+(i===0?0:choice([-1,1])),used);if(club){used.push(club.name);offers.push(createOffer(club,'bid'))}}const loanEligible=state.age<=24&&state.contractYears>=1&&(state.roleLevel<=2||state.season.apps<14);if(loanEligible){const lo=createLoanOffer();if(lo)offers.push(lo)}if(offers.length===1){beginNewSeason();return}offerIntro.textContent=loanEligible?'Du stehst unter Vertrag. Kaufangebote sind selten; eine Leihe kann dir mehr Spielzeit bringen.':'Du stehst noch unter Vertrag. Nur Vereine mit echtem Kaufangebot können dich fest verpflichten.'}else{const cur=createOffer(currentClub(),'extension');cur.id='extend';cur.roleLevel=Math.max(state.roleLevel,determineRole(currentClub(),1));cur.salary=Math.max(state.salary*.98,wageFor(currentClub(),cur.roleLevel));offers.push(cur);const used=[];for(const d of[-1,0,1]){const club=pickClubNear(target+d,used);if(club){used.push(club.name);offers.push(createOffer(club,'free'))}}offerIntro.textContent='Dein Vertrag ist ausgelaufen. Du kannst frei zwischen diesen Angeboten wählen.'}state.pendingOffers=offers;renderOffers();offersModal.classList.remove('hidden')}
+function renderOffers(){offers.innerHTML=state.pendingOffers.map(o=>{const kind=o.kind==='continue'?'Laufender Vertrag':o.kind==='bid'?'Kaufangebot':o.kind==='extension'?'Verlängerung':o.kind==='loan'?'Leihe – 1 Saison':'Ablösefrei';const role=ROLE_NAMES[o.roleLevel],pc=Math.round(clamp(ROLE_PLAY[o.roleLevel]+(o.roleLevel===1?.04:0),.12,.98)*100);return`<div class="offer"><div class="section-head" style="margin-bottom:0"><div><h4>${esc(o.club)}</h4><div class="meta">${esc(o.country)} · Vereinsniveau ${o.prestige}/10</div></div><span class="rolebadge role${o.roleLevel}">${role}</span></div><div class="offerfacts"><div class="fact"><small>Vertragsart</small><b>${kind}</b></div><div class="fact"><small>${o.kind==='loan'?'Dauer':'Laufzeit'}</small><b>${o.years} Jahr(e)</b></div><div class="fact"><small>Gehalt/Woche</small><b>${euros(o.salary)}</b></div><div class="fact"><small>Erwartete Einsatzchance</small><b>${pc}%</b></div>${o.kind==='bid'?`<div class="fact"><small>Ablöse</small><b>${millions(o.fee)}</b></div>`:''}</div>${o.status?`<div class="offer-status">${esc(o.status)}</div>`:''}<div class="offer-actions"><button class="primary" onclick="acceptOffer('${o.id}')">${o.kind==='continue'?'Vertrag fortsetzen':o.kind==='loan'?'Leihe annehmen':o.club===state.club?'Unterschreiben':'Wechseln'}</button>${!o.negotiated&&!['continue','loan'].includes(o.kind)?`<button class="secondary" onclick="openNegotiate('${o.id}')">Verhandeln</button>`:''}</div></div>`}).join('')}
+function openNegotiate(id){negotiatingOfferId=id;negotiateModal.classList.remove('hidden')}function closeNegotiate(){negotiateModal.classList.add('hidden');negotiatingOfferId=null}
+function negotiateCurrent(type){const o=state.pendingOffers.find(x=>x.id===negotiatingOfferId);if(!o)return;const club=clubByName(o.club);let accept=.6;if(type==='role')accept=.42+Math.max(-.12,(state.overall-club.squad)*.025);if(type==='salary')accept=.62;if(type==='years')accept=.66;const ok=chance(clamp(accept,.2,.82));o.negotiated=true;if(ok){if(type==='salary'){o.salary*=1.16;o.status='Verhandlung erfolgreich: +16 % Gehalt.'}if(type==='role'){if(o.roleLevel<4)o.roleLevel++;o.salary=Math.max(o.salary,wageFor(club,o.roleLevel)*.9);o.status='Verhandlung erfolgreich: größere Kaderrolle.'}if(type==='years'){o.years=Math.max(1,o.years-1);o.status='Verhandlung erfolgreich: kürzere Laufzeit.'}}else{o.status='Der Verein lehnt die Nachverhandlung ab. Das ursprüngliche Angebot bleibt bestehen.'}closeNegotiate();renderOffers();toast(ok?'Verhandlung erfolgreich':'Verein bleibt beim ursprünglichen Angebot')}
+function acceptOffer(id){const o=state.pendingOffers.find(x=>x.id===id);if(!o)return;const old=state.club;if(o.kind==='continue'){addLog(`Du erfüllst deinen laufenden Vertrag bei ${state.club}.`)}else if(o.kind==='loan'){state.onLoan={parentClub:old,parentClubSince:state.clubSince,parentSalary:state.salary,returnYear:state.year+1};state.club=o.club;state.clubSince=state.year;state.roleLevel=o.roleLevel;state.trust=clamp(rndi(55,66),40,80);state.captain=false;state.career.clubs.push(o.club);state.career.transfers.push({year:state.year,from:old,to:o.club,fee:0,kind:'Leihe'});state.clubStats[o.club]??={apps:0,goals:0,assists:0,clean:0};state.coach=makeCoach(state.year);state.competitor=makeCompetitor(o.club,state.pos);addLog(`Leihe: ${old} → ${o.club} für eine Saison. Geplante Rolle: ${ROLE_NAMES[o.roleLevel]}.`);addNews('LEIHE FÜR DEN NÄCHSTEN SCHRITT',`${state.name} wechselt für ein Jahr zu ${o.club}, um mehr Spielzeit zu bekommen.`)}else{state.contractYears=o.years;state.salary=o.salary;state.roleLevel=o.roleLevel;if(o.club!==state.club){state.club=o.club;state.clubSince=state.year;state.career.clubs.push(o.club);state.career.transfers.push({year:state.year,from:old,to:o.club,fee:o.fee,kind:'Transfer'});state.trust=clamp(rndi(48,60)+(o.roleLevel-2)*4,20,82);state.captain=false;state.clubStats[o.club]??={apps:0,goals:0,assists:0,clean:0};state.coach=makeCoach(state.year);state.competitor=makeCompetitor(o.club,state.pos);addLog(`Transfer: ${old} → ${o.club}. Rolle: ${ROLE_NAMES[o.roleLevel]}, Vertrag: ${o.years} Jahre.`);addNews('TRANSFER PERFEKT',`${state.name} wechselt von ${old} zu ${o.club}. Geplante Rolle: ${ROLE_NAMES[o.roleLevel]}.`)}else{state.trust=clamp(state.trust+7,0,100);addLog(`Vertrag bei ${state.club} verlängert: ${o.years} Jahre, Rolle ${ROLE_NAMES[o.roleLevel]}.`)}}offersModal.classList.add('hidden');beginNewSeason()}
+function beginNewSeason(){state.season=emptySeason();state.roleMomentum=clamp((state.roleMomentum||0)*.35,-2,2);state.lastTraining=0;state.form=clamp(state.form*.78+14,22,84);state.transferRequest=false;state.forceTransfer=false;state.pendingOffers=[];state.rumorClub='';state._finishing=false;ensureSeasonSystems();save();render();toast(`Neue Saison ${seasonName()} gestartet`)}
+
+function getCareerTitleInfo(){
+  const c=state.career,a=c.awards;
+  if(a.ballon>=5||(c.worldCups>=1&&c.clTitles>=3&&state.peakOverall>=90))
+    return{title:'Der Größte seiner Generation',reason:`Du hast ${a.ballon} Ballon-d'Or-Titel, ${c.clTitles} Champions-League-Titel und ${c.worldCups} WM-Titel gesammelt – eine außergewöhnliche Karriere auf höchstem Niveau.`};
+  if(c.worldCups>=1)
+    return{title:'Held einer Nation',reason:`Du hast mit ${state.country} die Weltmeisterschaft gewonnen. Ein WM-Titel prägt deinen Karriereabschluss stärker als fast jede Vereinsauszeichnung.`};
+  if(new Set(c.clubs).size===1&&c.apps>=400)
+    return{title:'One Club Man',reason:`Du bist deinem einzigen Verein über mindestens 400 Pflichtspiele treu geblieben.`};
+  if(c.goals>=500)
+    return{title:'Die Tormaschine',reason:`Du hast mindestens 500 Vereinstore erzielt und deine Karriere vor allem durch außergewöhnliche Torzahlen geprägt.`};
+  if(c.clTitles>=2)
+    return{title:'König von Europa',reason:`Du hast die Champions League ${c.clTitles}-mal gewonnen und damit mehrfach Europas wichtigsten Vereinswettbewerb erobert.`};
+  if(c.trophies.length>=10)
+    return{title:'Seriensieger',reason:`Du hast insgesamt ${c.trophies.length} Titel und Rekord-Auszeichnungen gesammelt.`};
+  if(a.goldenBoy&&a.ballon===0&&state.peakOverall<80)
+    return{title:'Das ewige Talent',reason:`Du wurdest früh als Golden Boy ausgezeichnet, konntest den ganz großen Sprung zur dauerhaften Weltklasse aber nicht vollenden.`};
+  if(state.peakOverall>=88&&c.trophies.length<=2)
+    return{title:'Der Unvollendete',reason:`Du hast mit ${state.peakOverall} GES Weltklasse-Niveau erreicht, aber vergleichsweise wenige große Titel gewonnen.`};
+  if(new Set(c.clubs).size>=8)
+    return{title:'Der Wandervogel',reason:`Du hast für ${new Set(c.clubs).size} verschiedene Vereine gespielt und deine Karriere in vielen unterschiedlichen Teams verbracht.`};
+  if(c.apps>=500)
+    return{title:'Vereinslegende',reason:`Mit ${c.apps} Vereinsspielen hast du eine außergewöhnlich lange und konstante Profikarriere hingelegt.`};
+  if(state.peakOverall<=70&&state.age>=32)
+    return{title:'Was hätte sein können …',reason:`Deine Karriere dauerte lange, aber dein höchster Gesamtwert von ${state.peakOverall} reichte nie für den ganz großen Durchbruch.`};
+  return{title:'Respektierte Profikarriere',reason:`Du hast ${c.apps} Vereinsspiele, ${state.national.caps} Länderspiele und ${c.trophies.length} Titel bzw. Rekord-Auszeichnungen gesammelt.`}
+}
+function getCareerTitle(){
+  return getCareerTitleInfo().title
+}
+function retireCareer(auto=false){if(!state||state.retired)return;if(!auto&&state.age<18&&!confirm('Die Karriere ist noch sehr jung. Wirklich beenden?'))return;state.retired=true;addLog(auto?'Die aktive Karriere endet.':'Du erklärst deinen Rücktritt.');save();showCareerEnd();render()}
+function showCareerEnd(){
+  const c=state.career,a=c.awards,cmp=careerComparisons(),titleInfo=getCareerTitleInfo();
+  careerTitleEl.textContent=titleInfo.title;
+  const totalAwards=Object.values(a).reduce((x,y)=>x+y,0);
+  const totalGames=c.apps+state.national.caps;
+  const card=(p,label,cls='')=>{
+    const gk=legendGroup()==='GK';
+    return`<div class="compare-card ${cls}"><small class="muted">${label}</small><h4>${esc(p.name)}</h4><div class="compare-score">${p.score}/99</div><div class="compare-stats"><span>Gesamtspiele <b>${p.apps}</b></span>${gk?`<span>Zu Null <b>${p.clean||0}</b></span>`:`<span>Tore <b>${p.goals}</b></span><span>Vorlagen <b>${p.assists}</b></span>`}<span>Ballon d'Or <b>${p.ballon}</b></span><span>Titel <b>${p.titles}</b></span></div></div>`
+  };
+  const you={name:state.name,score:cmp.score,apps:totalGames,goals:c.goals+state.national.goals,assists:c.assists,clean:c.clean,ballon:a.ballon,titles:c.trophies.length};
+
+  careerSummary.innerHTML=`
+    <div class="info-banner" style="margin:0 0 14px"><b>Warum dieser Karrieretitel?</b><br>${esc(titleInfo.reason)}</div>
+    <div class="muted">${esc(state.name)} · Karriere ${state.startYear}–${state.year} · Rücktritt mit ${state.age} · ${esc(state.pos)} · ${esc(state.country)}</div>
+    <div class="summary-grid" style="margin-top:13px">
+      <div class="stat"><b>${c.apps}</b><small>Vereinsspiele</small></div>
+      <div class="stat"><b>${state.national.caps}</b><small>Länderspiele</small></div>
+      <div class="stat"><b>${totalGames}</b><small>Gesamtspiele</small></div>
+      <div class="stat"><b>${c.goals}</b><small>Vereinstore</small></div>
+      <div class="stat"><b>${c.assists}</b><small>Vorlagen</small></div>
+      <div class="stat"><b>${c.leagueTitles}</b><small>Meistertitel</small></div>
+      <div class="stat"><b>${c.clTitles}</b><small>Champions League</small></div>
+      <div class="stat"><b>${c.worldCups}</b><small>WM-Titel</small></div>
+      <div class="stat"><b>${c.euros}</b><small>EM-Titel</small></div>
+      <div class="stat"><b>${a.ballon}</b><small>Ballon d'Or</small></div>
+      <div class="stat"><b>${a.goldenBoy}</b><small>Golden Boy</small></div>
+      <div class="stat"><b>${totalAwards}</b><small>Auszeichnungen</small></div>
+    </div>
+    <div class="summary-section"><h3>Karrierevergleich</h3>
+      <div class="info-banner">Beim Spiele-Vergleich zählt für dich jetzt Verein + Nationalteam zusammen. Die realen Spieler bleiben vereinfachte spielinterne Karriere-Benchmarks und keine Live-Datenbank.</div>
+      <div class="compare-grid">${card(cmp.lower,cmp.lowerLabel)}${card(you,'Deine Karriere','you')}${card(cmp.higher,cmp.higherLabel)}</div>
+    </div>
+    <div class="summary-section"><h3>Vereine</h3><div class="chips">${[...new Set(c.clubs)].map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div></div>
+    <div class="summary-section"><h3>Saisonverlauf</h3><div class="historyrow head"><span>Saison</span><span>Verein</span><span>GES</span><span>Sp.</span><span>Tore</span><span>Ø</span></div>${c.history.slice(-12).reverse().map(h=>`<div class="historyrow"><span>${h.season}</span><span>${esc(h.club)}</span><span>${h.ovrAfter}</span><span>${h.apps}</span><span>${h.goals}</span><span>${h.rating?h.rating.toFixed(2):'-'}</span></div>`).join('')}</div>
+  `;
+  endModal.classList.remove('hidden')
+}
+function closeEnd(){endModal.classList.add('hidden')}function newCareerAfterEnd(){localStorage.removeItem(SAVE_KEY);state=null;location.reload()}
+
+const STYLE_MAP={
+ ST:['Knipser','Kompletter Stürmer','Pressingstürmer'],LF:['Dribbler','Inside Forward','Flankengeber'],RF:['Dribbler','Inside Forward','Flankengeber'],ZOM:['Spielmacher','Torgefährlicher Zehner','Freigeist'],ZM:['Box-to-Box','Spielmacher','Ballverteiler'],ZDM:['Balljäger','Aufbauspieler','Abräumer'],LV:['Offensiver Außenverteidiger','Defensivstark','Aufbauspieler'],RV:['Offensiver Außenverteidiger','Defensivstark','Aufbauspieler'],IV:['Zweikämpfer','Aufbauspieler','Antizipierer'],TW:['Linienkeeper','Mitspielender Torwart','Elfmeterkiller']};
+const COACH_FIRST=['Marco','Stefan','Daniel','Thomas','Luca','Andreas','Julian','Martin','David','Roberto','Carlos','Peter'];
+const COACH_LAST=['Keller','Baumann','Rossi','Martínez','Novak','Schmidt','Müller','Silva','Kovač','Berger','Fischer','Conti'];
+function defaultStyleFor(pos){return (STYLE_MAP[pos]||['Ausgewogen'])[0]}
+function updateStyleOptions(){const el=document.getElementById('pStyle');if(!el)return;const pos=document.getElementById('pPos')?.value||'ST';el.innerHTML=(STYLE_MAP[pos]||['Ausgewogen']).map(x=>`<option>${x}</option>`).join('')}
+function styleMods(){const x=state.playStyle||'';let m={goal:1,assist:1,create:1,def:1,gk:0,rating:0};if(['Knipser','Inside Forward','Torgefährlicher Zehner'].includes(x)){m.goal=1.15;m.assist=.94}if(['Spielmacher','Flankengeber','Freigeist','Ballverteiler'].includes(x)){m.assist=1.16;m.create=1.18;m.goal=.96}if(['Pressingstürmer','Box-to-Box','Balljäger','Zweikämpfer','Defensivstark','Abräumer','Antizipierer'].includes(x)){m.def=1.18;m.rating=.05}if(x==='Offensiver Außenverteidiger'){m.assist=1.12;m.create=1.12;m.def=.96}if(x==='Linienkeeper'){m.gk=1;m.rating=.05}if(x==='Mitspielender Torwart'){m.rating=.08}if(x==='Elfmeterkiller'){m.gk=1;m.rating=.04}return m}
+function makeCoach(year){return{name:`${choice(COACH_FIRST)} ${choice(COACH_LAST)}`,style:choice(['Entwickler','Taktiker','Motivator','Disziplintrainer']),relationship:rndi(46,66),since:year}}
+function makeCompetitor(clubName,pos){const club=clubByName(clubName),real=(REAL_CORE[clubName]||[]).map(x=>{const[n,p,o]=x.split('|');return{name:n,pos:p,ovr:+o}}).find(x=>x.pos===pos);if(real)return{...real,rating:clamp(6.55+(real.ovr-club.squad)*.025+rnd(-.25,.25),5.8,8.2)};const nm=choice(genericNames());return{name:nm,pos,ovr:clamp(Math.round(club.squad+rndi(-4,4)),50,93),rating:clamp(6.5+rnd(-.35,.5),5.7,8.2)}}
+function updateCompetitor(seasonEnd=false){if(!state.competitor||state.competitor.pos!==state.pos)state.competitor=makeCompetitor(state.club,state.pos);const c=state.competitor;if(seasonEnd)c.ovr=clamp(c.ovr+rndi(-1,2),48,94);c.rating=clamp(c.rating+rnd(-.13,.13),5.6,8.5)}
+function addNews(title,text){state.news??=[];if(state.news[0]?.title===title&&state.news[0]?.text===text)return;state.news.unshift({year:state.year,title,text});state.news=state.news.slice(0,18)}
+function setAgentFocus(v){if(!state)return;state.agentFocus=v;addLog(`Agentenfokus geändert: ${document.getElementById('agentFocus')?.selectedOptions[0]?.textContent||v}.`);save();render()}
+function getMatchContext(){
+  const n=state.season.match+1;
+  if(n===10)return{big:true,label:'DERBY',reason:'Prestige, Druck und Fans machen dieses Spiel besonders.'};
+  if(n===24)return{big:true,label:'TOPSPIEL',reason:'Ein direktes Duell mit großer Bedeutung für die Tabelle.'};
+  if(n===PLAYER_SEASON_MATCHES&&state.season.teamPos<=4)return{big:true,label:'TITELENTSCHEIDUNG',reason:'Der letzte Spieltag kann über die Saison entscheiden.'};
+  return{big:false,label:'LIGA',reason:''}
+}
+function matchOpponent(){const ctx=state?getMatchContext():{big:false};if(ctx.label==='DERBY')return choice(['Stadtrivale','FC Rivalenstadt','Traditionsrivale']);if(ctx.label==='TOPSPIEL')return choice(['Tabellenführer','Titelkonkurrent','FC Champions']);if(ctx.label==='TITELENTSCHEIDUNG')return choice(['Direkter Konkurrent','Titelrivale']);return choice(OPP)}
+function openSpecialMoment(){const g=posGroup();eventTag.textContent=state._matchContext?.big?'GROSSES SPIEL · 88. MINUTE':'88. MINUTE';eventTitle.textContent=g==='GK'?'Eins gegen Eins!':'Eine letzte große Chance';eventText.textContent=g==='GK'?'Der gegnerische Stürmer läuft allein auf dich zu. Wie reagierst du?':'Du bekommst kurz vor Schluss den Ball in einer gefährlichen Situation. Was machst du?';if(g==='GK')eventChoices.innerHTML=`<button class="decision" onclick="resolveSpecialMoment('rush')">🏃 Herauslaufen</button><button class="decision" onclick="resolveSpecialMoment('wait')">🧤 Lange stehen bleiben</button><button class="decision" onclick="resolveSpecialMoment('guess')">🎯 Früh entscheiden</button>`;else eventChoices.innerHTML=`<button class="decision" onclick="resolveSpecialMoment('shoot')">⚽ Schießen</button><button class="decision" onclick="resolveSpecialMoment('pass')">🎯 Pass spielen</button><button class="decision" onclick="resolveSpecialMoment('dribble')">⚡ Dribbling</button>`;eventModal.classList.remove('hidden')}
+function resolveSpecialMoment(action){const d=state.pendingMatch;if(!d)return;const q=clamp(.32+(state.overall-70)*.011+(state.form-50)*.003+(state._matchContext?.big?.03:0),.2,.75);let success=false;if(posGroup()==='GK'){let bonus=state.playStyle==='Elfmeterkiller'?.05:0;success=chance(q+bonus+(action==='wait'?.04:0));if(success){d.perf.saves++;d.oppGoals=Math.max(0,d.oppGoals-1);d.rating+=.45}else{d.rating-=.12}}else{const mod=action==='shoot'?(state.playStyle==='Knipser'?.08:0):action==='pass'?(['Spielmacher','Flankengeber'].includes(state.playStyle)?.08:.02):.0;success=chance(q+mod);if(success){if(action==='pass'){d.perf.assists++;d.teamGoals++;d.rating+=.45}else{d.perf.goals++;d.teamGoals++;d.rating+=.55}}else d.rating-=.1}state.specialMoments++;addLog(`Besonderer Moment: ${success?'Entscheidung gelingt':'Chance vergeben'} (${action}).`);eventModal.classList.add('hidden');state.pendingMatch=null;finalizePlayedMatch(d,false)}
+function positionAlternatives(pos){return({ST:['ZOM','LF','RF'],LF:['RF','ST','ZOM'],RF:['LF','ST','ZOM'],ZOM:['ZM','ST','LF'],ZM:['ZOM','ZDM'],ZDM:['ZM','IV'],LV:['RV','ZM'],RV:['LV','ZM'],IV:['ZDM','LV','RV'],TW:[]}[pos]||[])}
+function maybePositionChange(){if(state.age>31||state.season.match<6||state.season.match>PLAYER_SEASON_MATCHES-4||state.pendingPositionChange||!chance(.012))return;const alt=positionAlternatives(state.pos);if(!alt.length)return;const np=choice(alt);state.pendingPositionChange=np;eventTag.textContent='TRAINERIDEE';eventTitle.textContent=`Neue Position: ${np}?`;eventText.textContent=`${state.coach.name} glaubt, dass deine Fähigkeiten auch auf ${np} gut funktionieren könnten. Ein Wechsel kann neue Chancen öffnen, braucht aber Eingewöhnung.`;eventChoices.innerHTML=`<button class="decision" onclick="resolvePositionChange(true)">✅ Ausprobieren</button><button class="decision" onclick="resolvePositionChange(false)">❌ Auf meiner Position bleiben</button>`;eventModal.classList.remove('hidden')}
+function resolvePositionChange(ok){const np=state.pendingPositionChange;if(ok&&np){const old=state.pos;state.pos=np;state.positionHistory.push(np);state.playStyle=defaultStyleFor(np);state.form=clamp(state.form-4,10,100);state.roleMomentum-=1;state.competitor=makeCompetitor(state.club,np);addLog(`Positionswechsel: ${old} → ${np}.`);addNews('NEUE ROLLE AUF DEM PLATZ',`${state.name} wird von ${state.coach.name} künftig als ${np} eingesetzt.`)}else addLog('Du lehnst den vorgeschlagenen Positionswechsel ab.');state.pendingPositionChange=null;eventModal.classList.add('hidden');render()}
+function milestone(key,value,levels,label){for(const n of levels){const id=key+n;if(value>=n&&!state.milestones[id]){state.milestones[id]=true;addNews('MEILENSTEIN',`${state.name} erreicht ${n} ${label}.`);addLog(`Meilenstein: ${n} ${label}.`)}}}
+function checkMilestones(){milestone('apps',state.career.apps,[1,50,100,250,500,750],'Profispiele');milestone('goals',state.career.goals,[1,25,50,100,250,500],'Karrieretore');milestone('caps',state.national.caps,[1,25,50,100,150],'Länderspiele')}
+function clubRecordTargets(){const p=currentClub().prestige;return{apps:280+p*18,goals:posGroup()==='GK'?999:120+p*14,clean:posGroup()==='GK'?100+p*9:999}}
+function checkClubRecords(){const cs=state.clubStats[state.club],t=clubRecordTargets();if(!cs)return;for(const k of ['apps','goals','clean']){const id=`record_${state.club}_${k}`;if(cs[k]>=t[k]&&!state.milestones[id]){state.milestones[id]=true;const nm=k==='apps'?'Einsatzrekord':k==='goals'?'Torrekord':'Zu-null-Rekord';addNews('VEREINSREKORD',`${state.name} stellt bei ${state.club} einen neuen ${nm} auf.`);state.career.trophies.push(`${state.year}: ${nm} ${state.club}`)}}}
+function updateCareerStory(){const c=state.career;let story='Auf dem Weg';if(state.pos==='TW'&&c.apps>=300&&c.clean>=120&&state.peakOverall>=86)story='Torwart-Legende';else if(c.clubs.length>=7)story='Journeyman';else if(state.age>=30&&new Set(c.clubs).size===1&&c.apps>=300)story='One Club Man';else if(state.totalInjuryGames>=10&&avg(state.season.ratings)>=7.25)story='Comeback-Kid';else if(state.age<=20&&state.overall>=82)story='Wunderkind';else if(state.age>=25&&state.overall-state.initialOverall>=18)story='Spätstarter';else if(state.peakOverall-state.overall>=8&&state.peakOverall>=85)story='Gefallener Star';else if(c.awards.ballon>0||state.overall>=90)story='Weltstar';else if((state.clubStats[state.club]?.apps||0)>=220)story='Vereinsikone';if(state.story!==story){state.story=story;state.storyHistory.push({year:state.year,story});if(story!=='Auf dem Weg')addNews('KARRIEREGESCHICHTE',`Deine Karriere wird inzwischen als „${story}“ beschrieben.`)}return story}
+function renderV5Panels(){const c=state.competitor||makeCompetitor(state.club,state.pos),av=avg(state.season.ratings)||6.4;const rc=document.getElementById('competitorCard');if(rc)rc.innerHTML=`<div class="rival-grid"><div class="rival-person"><b>${esc(state.name)}</b><small>${state.overall} GES · Ø ${av.toFixed(2)}</small></div><div class="rival-vs">VS</div><div class="rival-person"><b>${esc(c.name)}</b><small>${c.ovr} GES · Ø ${c.rating.toFixed(2)}</small></div></div><div class="tiny muted" style="margin-top:9px">${av>c.rating+.25?'Du liegst aktuell vorne.':c.rating>av+.25?'Dein Konkurrent hat derzeit die Nase vorne.':'Das Duell ist völlig offen.'}</div>`;const cc=document.getElementById('coachCard');if(cc)cc.innerHTML=`<div class="coach-line"><span>Trainer</span><b>${esc(state.coach.name)}</b></div><div class="coach-line"><span>Typ</span><b>${esc(state.coach.style)}</b></div><div class="coach-line"><span>Beziehung</span><b>${Math.round(state.coach.relationship)}/100</b></div>`;const af=document.getElementById('agentFocus');if(af)af.value=state.agentFocus;updateCareerStory();const sc=document.getElementById('storyCard');if(sc)sc.innerHTML=`<div class="story-title">${esc(state.story)}</div><div class="muted tiny" style="margin-top:4px">Spielertyp: ${esc(state.playStyle)} · Positionen: ${[...new Set(state.positionHistory)].join(' → ')}</div>`;const cs=state.clubStats[state.club]||{apps:0,goals:0,clean:0},rt=clubRecordTargets(),rr=document.getElementById('clubRecordCard');if(rr)rr.innerHTML=`<div class="tiny goldtext" style="font-weight:900;margin-bottom:4px">VEREINSREKORDE · ${esc(state.club)}</div><div class="record-line"><span>Einsätze</span><b>${cs.apps} / ${rt.apps}</b></div>${posGroup()==='GK'?`<div class="record-line"><span>Zu Null</span><b>${cs.clean} / ${rt.clean}</b></div>`:`<div class="record-line"><span>Tore</span><b>${cs.goals} / ${rt.goals}</b></div>`}`;const nf=document.getElementById('newsFeed');if(nf)nf.innerHTML=state.news.length?state.news.slice(0,8).map(n=>`<div class="news-item"><strong>📰 ${esc(n.title)}</strong><small>${esc(n.text)}</small><small>${n.year}</small></div>`).join(''):'<div class="muted tiny">Noch keine großen Schlagzeilen.</div>'}
+
+// Wrap the existing render so V5 panels are refreshed too.
+const renderV4=render;
+render=function(){renderV4();if(state)renderV5Panels()};
+
+// ---------------- MANAGER MODE ----------------
+let managerState=null;
+const managerGame=document.getElementById('managerGame'),managerSetup=document.getElementById('managerSetup'),managerContinueBtn=document.getElementById('managerContinueBtn');
+function managerEmptySeason(){return{match:0,points:0,wins:0,draws:0,losses:0,gf:0,ga:0,pos:10,youthPromoted:false,objectives:[],objectiveDone:false}}
+function managerSave(){if(!managerState)return;localStorage.setItem(MANAGER_SAVE_KEY,JSON.stringify(managerState));managerContinueBtn?.classList.remove('hidden');savePill.textContent='Managerkarriere gespeichert'}
+function managerLoad(){try{return JSON.parse(localStorage.getItem(MANAGER_SAVE_KEY)||'null')}catch(e){return null}}
+function managerClub(){return clubByName(managerState.club)}
+function managerSquadRating(){return Math.round(managerState.squad.reduce((a,p)=>a+p.ovr,0)/Math.max(1,managerState.squad.length))}
+function managerValue(p){return Math.max(.4,Math.pow(p.ovr/67,7)*(p.age<24?1.25:1)*(p.age>30?.7:1))}
+function managerPlayerName(){const first=['Leo','Noah','Elias','Luca','David','Felix','Adrian','Milan','Jonas','Samuel','Nico','Marco'];const last=['Berger','Huber','Kovač','Müller','Rossi','Silva','Novak','Fischer','Costa','Schmidt','Meyer','Bauer'];return `${choice(first)} ${choice(last)}`}
+function generateManagerSquad(club){const rows=[],real=(REAL_CORE[club.name]||[]);for(const x of real){const[n,pos,o]=x.split('|');rows.push({name:n,pos,ovr:+o,age:rndi(20,31),form:rndi(55,75),potential:+o+rndi(0,2),real:true})}const pos=['TW','TW','IV','IV','IV','LV','RV','ZDM','ZM','ZM','ZOM','LF','RF','ST','ST','ZM','IV','RF'];while(rows.length<18){const p=pos[rows.length%pos.length];rows.push({name:managerPlayerName(),pos:p,ovr:clamp(Math.round(club.squad+rndi(-8,5)),52,91),age:rndi(18,32),form:rndi(48,74),potential:clamp(Math.round(club.squad+rndi(-2,11)),58,94),real:false})}return rows}
+function generateManagerObjectives(){const p=managerClub().prestige;return[{type:'position',target:p>=9?3:p>=7?6:p>=5?9:12,label:`Liga: Platz ${p>=9?3:p>=7?6:p>=5?9:12} oder besser`},{type:'wins',target:p>=8?17:p>=6?14:10,label:`Mindestens ${p>=8?17:p>=6?14:10} Siege`} ]}
+function managerObjectiveValue(o){return o.type==='position'?(19-managerState.season.pos):managerState.season.wins}
+function managerObjectiveDone(o){return o.type==='position'?managerState.season.pos<=o.target:managerState.season.wins>=o.target}
+function addManagerLog(t){managerState.log.unshift({year:managerState.year,text:t});managerState.log=managerState.log.slice(0,100)}
+function addManagerNews(title,text){managerState.news.unshift({year:managerState.year,title,text});managerState.news=managerState.news.slice(0,16)}
+function showManagerSetup(){home.classList.add('hidden');setup.classList.add('hidden');game.classList.add('hidden');managerGame.classList.add('hidden');managerSetup.classList.remove('hidden');populateManagerClubs()}
+function goHomeFromManager(){managerSetup.classList.add('hidden');managerGame.classList.add('hidden');home.classList.remove('hidden')}
+function populateManagerClubs(){const el=document.getElementById('mClub');if(!el||el.options.length)return;el.innerHTML=CLUBS.filter(c=>c.prestige>=3).map(c=>`<option value="${esc(c.name)}">${esc(c.name)} – ${c.country} · Niveau ${c.prestige}/10</option>`).join('')}
+function startManagerCareer(){const club=clubByName(document.getElementById('mClub').value),formation=document.getElementById('mFormation').value,mentality=document.getElementById('mMentality').value,youth=document.getElementById('mYouth').value;managerState={version:1,startYear:2026,year:2026,age:35,name:document.getElementById('mName').value.trim()||'Manager',country:document.getElementById('mCountry').value,club:club.name,reputation:clamp(18+club.prestige*2,20,45),board:72,budget:Math.round(7+club.prestige*7+rnd(0,8)),formation,mentality,youth,season:managerEmptySeason(),career:{matches:0,wins:0,trophies:[],clubs:[club.name],leagueTitles:0,cups:0,cl:0,seasons:0},squad:generateManagerSquad(club),news:[],log:[],retired:false};managerState.season.objectives=generateManagerObjectives();addManagerLog(`Managerkarriere bei ${club.name} gestartet.`);addManagerNews('NEUER TRAINER',`${managerState.name} übernimmt ${club.name}.`);managerSetup.classList.add('hidden');home.classList.add('hidden');game.classList.add('hidden');managerGame.classList.remove('hidden');managerSave();renderManager()}
+function continueManagerCareer(){managerState=managerLoad();if(!managerState)return;home.classList.add('hidden');setup.classList.add('hidden');game.classList.add('hidden');managerSetup.classList.add('hidden');managerGame.classList.remove('hidden');renderManager()}
+function updateManagerTactics(){if(!managerState)return;managerState.formation=document.getElementById('mFormationLive').value;managerState.mentality=document.getElementById('mMentalityLive').value;managerState.youth=document.getElementById('mYouthLive').value;addManagerLog(`Taktik angepasst: ${managerState.formation}, ${managerState.mentality}.`);managerSave();renderManager()}
+function managerSeasonName(){return `${managerState.year}/${String(managerState.year+1).slice(-2)}`}
+function managerNextContext(){const n=managerState.season.match+1;if(n===10)return{big:true,label:'DERBY'};if(n===20)return{big:true,label:'TOPSPIEL'};if(n===30&&managerState.season.pos<=4)return{big:true,label:'SAISONFINALE'};return{big:false,label:'LIGA'}}
+function renderManager(){if(!managerState)return;document.getElementById('mManagerName').textContent=managerState.name;document.getElementById('mClubLine').textContent=`Manager · ${managerState.club}`;document.getElementById('mChips').innerHTML=`<span class="chip">${esc(managerState.country)}</span><span class="chip">${esc(managerState.formation)}</span><span class="chip gold">${esc(managerState.mentality)}</span>`;document.getElementById('mRep').textContent=Math.round(managerState.reputation);document.getElementById('mYear').textContent=managerState.year;document.getElementById('mBoard').textContent=Math.round(managerState.board);document.getElementById('mBudget').textContent=`€ ${managerState.budget.toFixed(1).replace('.',',')} Mio.`;document.getElementById('mSquadRating').textContent=managerSquadRating();document.getElementById('mFormationLive').value=managerState.formation;document.getElementById('mMentalityLive').value=managerState.mentality;document.getElementById('mYouthLive').value=managerState.youth;document.getElementById('mSeasonLabel').textContent='Saison '+managerSeasonName();document.getElementById('mPos').textContent=managerState.season.pos+'.';document.getElementById('mWins').textContent=managerState.season.wins;document.getElementById('mGF').textContent=managerState.season.gf;document.getElementById('mGA').textContent=managerState.season.ga;const ctx=managerNextContext();document.getElementById('mNextMatch').className='matchbox'+(ctx.big?' bigmatch':'');document.getElementById('mNextMatch').innerHTML=managerState.season.match>=30?'<div class="week">SAISON BEENDET</div><div class="teams">Saisonabschluss</div>':`<div class="week">${ctx.label} · SPIEL ${managerState.season.match+1}/30</div><div class="teams">${esc(managerState.club)} <span class="muted">vs.</span> ${esc(choice(OPP))}</div>`;document.getElementById('mObjectives').innerHTML=managerState.season.objectives.map(o=>`<div class="objective-item ${managerObjectiveDone(o)?'done':''}"><div class="objective-top"><strong>${managerObjectiveDone(o)?'✓ ':''}${esc(o.label)}</strong><b>${o.type==='position'?managerState.season.pos+'.':managerState.season.wins}</b></div></div>`).join('');const sq=[...managerState.squad].sort((a,b)=>b.ovr-a.ovr);document.getElementById('mSquad').innerHTML=sq.map(p=>`<div class="manager-player ${p.age<=20?'young':''}"><b>${esc(p.name)} · ${p.pos}</b><small>${p.ovr} GES · ${p.age} Jahre · Form ${p.form}</small><small>Wert ca. ${millions(managerValue(p))}</small></div>`).join('');document.getElementById('mCareerMatches').textContent=managerState.career.matches;document.getElementById('mCareerWins').textContent=managerState.career.wins;document.getElementById('mTitles').textContent=managerState.career.trophies.length;document.getElementById('mClubs').textContent=new Set(managerState.career.clubs).size;document.getElementById('mTrophyList').innerHTML=managerState.career.trophies.slice(-8).map(x=>`<span class="chip gold">🏆 ${esc(x)}</span>`).join('')||'<span class="muted tiny">Noch keine Titel.</span>';document.getElementById('mNews').innerHTML=managerState.news.length?managerState.news.slice(0,8).map(n=>`<div class="news-item"><strong>📰 ${esc(n.title)}</strong><small>${esc(n.text)}</small><small>${n.year}</small></div>`).join(''):'<div class="muted tiny">Noch keine Meldungen.</div>';document.getElementById('mLog').innerHTML=managerState.log.map(x=>`<div class="logitem"><div class="logyear">${x.year}</div><div class="logtext">${esc(x.text)}</div></div>`).join('');managerSave()}
+function tacticMods(){let atk=0,def=0;if(managerState.mentality==='Offensiv'){atk=.23;def=-.13}if(managerState.mentality==='Defensiv'){atk=-.12;def=.24}if(managerState.mentality==='Ballbesitz'){atk=.10;def=.09}if(managerState.mentality==='Konter'){atk=.15;def=.02}if(managerState.formation==='3-4-3')atk+=.08;if(managerState.formation==='3-5-2')atk+=.04;if(managerState.formation==='4-2-3-1')def+=.05;if(managerState.formation==='4-4-2')def+=.03;return{atk,def}}
+function managerPlayMatch(){if(!managerState||managerState.retired)return;if(managerState.season.match>=30){finishManagerSeason();return}const sr=managerSquadRating(),mods=tacticMods(),oppStrength=clamp(managerClub().squad+rndi(-8,8),58,92),q=(sr-oppStrength)/18;let gf=Math.max(0,Math.round(rnd(.1,2.4)+q+mods.atk)),ga=Math.max(0,Math.round(rnd(.1,2.2)-q-mods.def));if(managerState.youth==='Hoch'&&chance(.08))gf=Math.max(0,gf-1);const pts=gf>ga?3:gf===ga?1:0;managerState.season.match++;managerState.career.matches++;managerState.season.gf+=gf;managerState.season.ga+=ga;if(pts===3){managerState.season.wins++;managerState.career.wins++}else if(pts===1)managerState.season.draws++;else managerState.season.losses++;managerState.season.points+=pts;const ppg=managerState.season.points/managerState.season.match;managerState.season.pos=clamp(Math.round(18-(ppg*4.1+managerClub().prestige*.55)+rnd(-1.2,1.2)),1,18);managerState.squad.forEach(p=>{p.form=clamp(p.form+rndi(-3,4)+(pts===3?1:pts===0?-1:0),30,95);if(p.age<=23&&chance((managerState.youth==='Hoch'?.022:.012)))p.ovr=clamp(p.ovr+1,45,p.potential)});document.getElementById('mLastMatch').innerHTML=`<div class="matchbox"><div class="week">LETZTES SPIEL</div><div class="match-result">${esc(managerState.club)} ${gf}:${ga} ${esc(choice(OPP))}</div></div>`;addManagerLog(`Spiel ${managerState.season.match}: ${gf}:${ga}.`);if(managerNextContext().big&&pts===3)addManagerNews('GROSSER SIEG',`${managerState.club} gewinnt ein Schlüsselspiel unter ${managerState.name}.`);if(managerState.season.match>=30)finishManagerSeason();else renderManager()}
+function managerSimGames(n){const y=managerState.year;let i=0;while(i<n&&managerState.year===y&&managerState.season.match<30){managerPlayMatch();i++}}
+function managerSimRest(){const y=managerState.year;let g=40;while(managerState.year===y&&managerState.season.match<30&&g--)managerPlayMatch()}
+function promoteYouth(){if(managerState.season.youthPromoted){toast('Du hast diese Saison bereits ein Talent hochgezogen.');return}const base=managerSquadRating(),boost=managerState.youth==='Hoch'?3:managerState.youth==='Niedrig'?-2:0,p={name:managerPlayerName(),pos:choice(['TW','IV','LV','RV','ZDM','ZM','ZOM','LF','RF','ST']),ovr:clamp(base-rndi(6,12)+boost,55,83),age:rndi(16,18),form:62,potential:clamp(base+rndi(4,14)+boost,70,95),real:false};managerState.squad.push(p);managerState.season.youthPromoted=true;addManagerNews('AKADEMIE-TALENT',`${p.name} (${p.age}) wird in die Profimannschaft hochgezogen.`);addManagerLog(`Jugendspieler ${p.name} hochgezogen.`);renderManager()}
+function buildManagerMarket(){const r=managerSquadRating(),positions=['TW','IV','LV','RV','ZDM','ZM','ZOM','LF','RF','ST'];managerState.market=Array.from({length:6},()=>{const age=rndi(18,31),ovr=clamp(r+rndi(-7,7),58,93);return{name:managerPlayerName(),pos:choice(positions),ovr,age,form:rndi(55,75),potential:clamp(ovr+(age<=21?rndi(3,12):rndi(0,4)),ovr,95)}})}
+function openManagerMarket(){buildManagerMarket();renderManagerMarket();document.getElementById('managerMarketModal').classList.remove('hidden')}
+function closeManagerMarket(){document.getElementById('managerMarketModal').classList.add('hidden')}
+function renderManagerMarket(){document.getElementById('managerMarket').innerHTML=managerState.market.map((p,i)=>{const v=managerValue(p);return`<div class="offer"><h4>${esc(p.name)} · ${p.pos}</h4><div class="meta">${p.age} Jahre · ${p.ovr} GES</div><div class="market-price">${millions(v)}</div><button class="primary" style="width:100%;margin-top:10px" onclick="buyManagerPlayer(${i})">Verpflichten</button></div>`}).join('')+`<div class="offer"><h4>Kaderspieler verkaufen</h4><div class="meta">Verkaufe den aktuell schwächsten Feldspieler und schaffe Budget.</div><button class="secondary" style="width:100%;margin-top:10px" onclick="sellWeakestPlayer()">Schwächsten verkaufen</button></div>`}
+function buyManagerPlayer(i){const p=managerState.market[i];if(!p)return;const v=managerValue(p);if(managerState.budget<v){toast('Budget reicht nicht aus.');return}managerState.budget-=v;managerState.squad.push(p);addManagerNews('NEUZUGANG',`${p.name} (${p.ovr} GES) unterschreibt bei ${managerState.club}.`);managerState.market.splice(i,1);renderManagerMarket();renderManager()}
+function sellWeakestPlayer(){if(managerState.squad.length<=15){toast('Der Kader ist bereits zu klein.');return}const candidates=managerState.squad.filter(p=>p.pos!=='TW').sort((a,b)=>a.ovr-b.ovr),p=candidates[0];const v=managerValue(p)*.78;managerState.squad.splice(managerState.squad.indexOf(p),1);managerState.budget+=v;addManagerLog(`${p.name} für rund ${millions(v)} verkauft.`);renderManagerMarket();renderManager()}
+function finishManagerSeason(){if(managerState._finishing)return;managerState._finishing=true;const pos=managerState.season.pos,objs=managerState.season.objectives,done=objs.filter(managerObjectiveDone).length;managerState.board=clamp(managerState.board+(done===objs.length?12:done?2:-14)+(pos<=4?5:0),0,100);managerState.reputation=clamp(managerState.reputation+(pos<=3?5:pos<=6?2:pos>=14?-3:0),1,99);if(pos===1){managerState.career.leagueTitles++;managerState.career.trophies.push(`${managerSeasonName()}: Meister ${managerState.club}`);addManagerNews('MEISTERTITEL',`${managerState.name} führt ${managerState.club} zur Meisterschaft.`)}if(managerClub().prestige>=8&&pos<=4&&chance(.18)){managerState.career.cl++;managerState.career.trophies.push(`${managerSeasonName()}: Champions League`);addManagerNews('EUROPAS KÖNIGE',`${managerState.club} gewinnt unter ${managerState.name} die Champions League.`)}if(chance(.14+managerClub().prestige*.01)){managerState.career.cups++;managerState.career.trophies.push(`${managerSeasonName()}: Pokalsieger`)}managerState.career.seasons++;addManagerLog(`Saison ${managerSeasonName()} beendet: Platz ${pos}, Vorstand ${Math.round(managerState.board)}/100.`);managerState.year++;managerState.age++;managerState.budget+=Math.max(5,managerClub().prestige*4+(pos<=6?8:0));if(managerState.board<22){addManagerNews('ENTLASSUNG',`${managerState.name} wird nach enttäuschenden Ergebnissen bei ${managerState.club} entlassen.`);managerState._finishing=false;retireManager(true);return}prepareManagerOffers()}
+function prepareManagerOffers(){const offers=[{club:managerState.club,stay:true}],used=[managerState.club];if(managerState.reputation>=30){for(let i=0;i<2;i++){const target=clamp(Math.round(managerState.reputation/10)+choice([-1,0,1]),3,10),c=pickClubNear(target,used);if(c){used.push(c.name);offers.push({club:c.name,stay:false})}}}if(offers.length===1){beginManagerSeason();return}const el=document.getElementById('managerOffers');el.innerHTML=offers.map((o,i)=>{const c=clubByName(o.club);return`<div class="offer"><h4>${o.stay?'Bei '+esc(o.club)+' bleiben':esc(o.club)}</h4><div class="meta">${c.country} · Niveau ${c.prestige}/10 · Kader ${c.squad}</div><button class="${o.stay?'secondary':'primary'}" style="width:100%;margin-top:10px" onclick="acceptManagerOffer('${o.club.replace(/'/g,"\\'")}')">${o.stay?'Bleiben':'Job annehmen'}</button></div>`}).join('');document.getElementById('managerOffersModal').classList.remove('hidden')}
+function acceptManagerOffer(clubName){const old=managerState.club;if(clubName!==old){const c=clubByName(clubName);managerState.club=clubName;managerState.career.clubs.push(clubName);managerState.squad=generateManagerSquad(c);managerState.budget=Math.round(8+c.prestige*7+rnd(0,10));managerState.board=70;addManagerNews('NEUER JOB',`${managerState.name} verlässt ${old} und übernimmt ${clubName}.`)}document.getElementById('managerOffersModal').classList.add('hidden');beginManagerSeason()}
+function beginManagerSeason(){managerState.season=managerEmptySeason();managerState.season.objectives=generateManagerObjectives();managerState._finishing=false;renderManager();toast(`Manager-Saison ${managerSeasonName()} gestartet`)}
+function retireManager(auto=false){if(!managerState||managerState.retired)return;managerState.retired=true;managerSave();const c=managerState.career,title=c.cl>=3?'Europäische Trainerlegende':c.leagueTitles>=5?'Serienmeister':c.trophies.length>=6?'Titelsammler':c.clubs.length>=5?'Weltenbummler':'Respektierter Trainer';document.getElementById('managerCareerTitle').textContent=title;document.getElementById('managerCareerSummary').innerHTML=`<div class="summary-grid"><div class="stat"><b>${c.seasons}</b><small>Saisons</small></div><div class="stat"><b>${c.matches}</b><small>Spiele</small></div><div class="stat"><b>${c.wins}</b><small>Siege</small></div><div class="stat"><b>${c.trophies.length}</b><small>Titel</small></div><div class="stat"><b>${c.leagueTitles}</b><small>Meisterschaften</small></div><div class="stat"><b>${c.cl}</b><small>Champions League</small></div><div class="stat"><b>${new Set(c.clubs).size}</b><small>Vereine</small></div><div class="stat"><b>${Math.round(managerState.reputation)}</b><small>Manager-Ruf</small></div></div><div class="summary-section"><h3>Vereine</h3><div class="chips">${[...new Set(c.clubs)].map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div></div>`;document.getElementById('managerEndModal').classList.remove('hidden')}
+function closeManagerEnd(){document.getElementById('managerEndModal').classList.add('hidden')}
+function newManagerCareerAfterEnd(){localStorage.removeItem(MANAGER_SAVE_KEY);managerState=null;location.reload()}
+
+// add richer career end with story tag
+const showCareerEndV4=showCareerEnd;
+showCareerEnd=function(){showCareerEndV4();const root=document.getElementById('careerSummary');if(root&&state){const d=document.createElement('div');d.className='summary-section';d.innerHTML=`<h3>Deine Karrieregeschichte</h3><div class="story-card"><div class="story-title">${esc(updateCareerStory())}</div><div class="muted tiny">Spielertyp: ${esc(state.playStyle)} · Große Spiele: ${state.bigGames||0} · Besondere Spielsituationen: ${state.specialMoments||0}</div></div>`;root.appendChild(d)}};
+
+// initialize manager UI and style choices
+updateStyleOptions();populateManagerClubs();
+
+window.addEventListener('load',()=>{const saved=load();if(saved){continueBtn.classList.remove('hidden');savePill.textContent=`${saved.name} · ${saved.club}`}})
+
+window.addEventListener('load',()=>{updateStyleOptions();populateManagerClubs();const ms=managerLoad();if(ms){managerContinueBtn?.classList.remove('hidden')} });
+</script>
+</body>
+</html>
